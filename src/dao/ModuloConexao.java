@@ -9,8 +9,8 @@ public class ModuloConexao {
 	public static Connection conector() {
 		
 		Connection con = null;
-		String path = "jdbc:postgresql://localhost:5432/suporte";
-		String nome = "postgres";
+		String path = "jdbc:mysql://localhost:3306/suporte";
+		String nome = "root";
 		String senha = "46182001";
 		
 		try {
@@ -19,7 +19,6 @@ public class ModuloConexao {
 		}catch(SQLException e) {
 			return null;
 		}
+		
 	}
-	
-	
 }

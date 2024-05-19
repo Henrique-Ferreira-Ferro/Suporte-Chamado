@@ -8,6 +8,7 @@ public class Departamento {
 	private int id;
 	private String nome;
 	
+	//Um departamento possui muitos funcionarios
 	private List<Usuarios> usuarios = new ArrayList<>();
 	
 	public Departamento() {
@@ -18,6 +19,12 @@ public class Departamento {
 		super();
 		this.nome = nome;
 		this.usuarios = usuarios;
+	}
+	
+	
+
+	public int getId() {
+		return id;
 	}
 
 	public String getNome() {

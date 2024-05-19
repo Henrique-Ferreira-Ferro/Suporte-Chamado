@@ -23,6 +23,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import dao.ModuloConexao;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class TelaLogin extends JFrame {
 
@@ -32,12 +34,12 @@ public class TelaLogin extends JFrame {
 	private static JPasswordField txtSenha;
 	private static JLabel lblEntrar;
 	
-
+	
 	static Connection con = null;
 	static PreparedStatement pstm = null;
 	static ResultSet rs = null;
 	
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -66,6 +68,16 @@ public class TelaLogin extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 812, 550);
 		contentPane = new JPanel();
+		contentPane.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {					
+				if (e.getKeyCode() == KeyEvent.VK_ENTER){
+					if(logar() == true) {
+						setVisible(false);
+					}
+				}	
+			}
+		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
 		setContentPane(contentPane);
@@ -85,7 +97,7 @@ public class TelaLogin extends JFrame {
 		panel.add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\henri\\OneDrive\\Documentos\\Documents\\Estudo_VsC\\Java\\Suporte Chamados\\src\\recursos\\icone azul_resized.jfif"));
+		lblNewLabel_1.setIcon(new ImageIcon(TelaLogin.class.getResource("/recursos/icone azul_resized.png")));
 		lblNewLabel_1.setBounds(69, 90, 259, 294);
 		panel.add(lblNewLabel_1);
 		
@@ -108,6 +120,16 @@ public class TelaLogin extends JFrame {
 		contentPane.add(lblLogin);
 		
 		txtNome = new JTextField();
+		txtNome.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER){
+					if(logar() == true) {
+						setVisible(false);
+					}
+				}	
+			}
+		});
 		txtNome.setBorder(new LineBorder(new Color(171, 173, 179)));
 		txtNome.setBackground(new Color(228, 228, 228));
 		txtNome.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -117,6 +139,16 @@ public class TelaLogin extends JFrame {
 		txtNome.setColumns(10);
 		
 		txtSenha = new JPasswordField();
+		txtSenha.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER){
+					if(logar() == true) {
+						setVisible(false);
+					}
+				}	
+			}
+		});
 		txtSenha.setBorder(new LineBorder(new Color(171, 173, 179)));
 		txtSenha.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtSenha.setBackground(new Color(228, 228, 228));
@@ -149,6 +181,9 @@ public class TelaLogin extends JFrame {
 		contentPane.add(rbMostraSenha);
 		
 		JButton btnEntrar = new JButton("ENTRAR");
+		btnEntrar.addKeyListener(new KeyAdapter() {
+			
+		});
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(logar() == true) {
@@ -161,22 +196,8 @@ public class TelaLogin extends JFrame {
 		btnEntrar.setForeground(Color.WHITE);
 		btnEntrar.setFont(new Font("Arial", Font.PLAIN, 12));
 		btnEntrar.setBackground(new Color(79, 79, 253));
-		btnEntrar.setBounds(441, 410, 283, 26);
+		btnEntrar.setBounds(441, 381, 283, 26);
 		contentPane.add(btnEntrar);
-		
-		JLabel lblNoTemUma = new JLabel("Não tem uma conta ?");
-		lblNoTemUma.setForeground(Color.BLACK);
-		lblNoTemUma.setFont(new Font("Arial", Font.PLAIN, 12));
-		lblNoTemUma.setBounds(441, 356, 122, 26);
-		contentPane.add(lblNoTemUma);
-		
-		JButton btnCriarConta = new JButton("Criar conta");
-		btnCriarConta.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnCriarConta.setForeground(Color.WHITE);
-		btnCriarConta.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnCriarConta.setBackground(new Color(79, 79, 253));
-		btnCriarConta.setBounds(621, 361, 103, 21);
-		contentPane.add(btnCriarConta);
 		
 		lblEntrar = new JLabel("");
 		lblEntrar.setIcon(new ImageIcon(TelaLogin.class.getResource("/recursos/dbok.png")));
@@ -219,7 +240,7 @@ public class TelaLogin extends JFrame {
 	}
 
 	public static boolean logar() {
-		String sql = "SELECT * FROM usuario WHERE name = ? AND senha = ?";
+		String sql = "SELECT * FROM usuario WHERE loginUsu = ? AND senhaUsu = ?";
 		
 		try {
 			pstm = con.prepareStatement(sql);
@@ -230,6 +251,8 @@ public class TelaLogin extends JFrame {
 			if(rs.next()) {
 				TelaPrincipal telaPrincipal = new TelaPrincipal();
 				telaPrincipal.setVisible(true);
+				telaPrincipal.getLblNome().setText(rs.getString(2));
+				telaPrincipal.getLblNome().setForeground(Color.GREEN);
 				return true;
 			}else {
 				JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro",JOptionPane.INFORMATION_MESSAGE);

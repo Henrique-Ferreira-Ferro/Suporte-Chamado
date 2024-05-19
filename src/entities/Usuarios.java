@@ -1,24 +1,33 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuarios {
 	private int id;
 	private String name;
 	private String senha;
 	private String email;
-	private String posicao;
-
+	private String nivel;
+	private String login;
+	
+	//Um funcionario pertence a um departamento
 	private Departamento departamento;
 
+	//Um usuario pode realizar varios chamados
+	private List<Chamado> chamados = new ArrayList<>();
+	
 	
 	public Usuarios() {
 		
 	}
 
-	public Usuarios(String name, String senha, String email, String posicao) {
+	public Usuarios(String name, String senha, String email, String posicao, String login) {
 		this.name = name;
 		this.senha = senha;
 		this.email = email;
-		this.posicao = posicao;
+		this.nivel = posicao;
+		this.login = login;
 	}
 
 
@@ -58,12 +67,12 @@ public class Usuarios {
 
 
 	public String getPosicao() {
-		return posicao;
+		return nivel;
 	}
 
 
 	public void setPosicao(String posicao) {
-		this.posicao = posicao;
+		this.nivel = posicao;
 	}
 
 	public Departamento getDepartamento() {
@@ -73,8 +82,30 @@ public class Usuarios {
 	public void setDepartamento(Departamento departamento) {
 		this.departamento = departamento;
 	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getNivel() {
+		return nivel;
+	}
+
+	public void setNivel(String nivel) {
+		this.nivel = nivel;
+	}
+
+	public List<Chamado> getChamados() {
+		return chamados;
+	}
 	
-	
+	public void setChamados(Chamado chamado) {
+		chamados.add(chamado);
+	}
 	
 	
 }
