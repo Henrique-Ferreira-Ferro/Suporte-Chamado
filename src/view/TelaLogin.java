@@ -239,6 +239,9 @@ public class TelaLogin extends JFrame {
 		this.lblEntrar = lblEntrar;
 	}
 
+	//Nota: Preciso mover tudo que envolve logica e comunicação com o banco de dados para uma classe 
+	//
+	
 	public static boolean logar() {
 		String sql = "SELECT * FROM usuario WHERE loginUsu = ? AND senhaUsu = ?";
 		
