@@ -25,6 +25,9 @@ import javax.swing.border.LineBorder;
 import dao.ModuloConexao;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 
 public class TelaLogin extends JFrame {
 
@@ -60,6 +63,7 @@ public class TelaLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public TelaLogin() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(TelaLogin.class.getResource("/recursos/suporte-tecnico.png")));
 		
 		con = ModuloConexao.conector();
 
@@ -156,6 +160,13 @@ public class TelaLogin extends JFrame {
 		contentPane.add(txtSenha);
 		
 		JButton btnEsqueciSenha = new JButton("Esqueci a senha");
+		btnEsqueciSenha.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				SenhaEsquecida chamado = new SenhaEsquecida();
+				chamado.setVisible(true);
+			}
+		});
 		btnEsqueciSenha.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnEsqueciSenha.setForeground(new Color(255, 255, 255));
 		btnEsqueciSenha.setBackground(new Color(79, 79, 253));
@@ -196,13 +207,32 @@ public class TelaLogin extends JFrame {
 		btnEntrar.setForeground(Color.WHITE);
 		btnEntrar.setFont(new Font("Arial", Font.PLAIN, 12));
 		btnEntrar.setBackground(new Color(79, 79, 253));
-		btnEntrar.setBounds(441, 381, 283, 26);
+		btnEntrar.setBounds(441, 360, 283, 26);
 		contentPane.add(btnEntrar);
 		
 		lblEntrar = new JLabel("");
 		lblEntrar.setIcon(new ImageIcon(TelaLogin.class.getResource("/recursos/dbok.png")));
 		lblEntrar.setBounds(441, 457, 38, 46);
 		contentPane.add(lblEntrar);
+		
+		JLabel lblNewLabel_2 = new JLabel("Não tem uma conta? Crie");
+		lblNewLabel_2.setFont(new Font("Arial", Font.BOLD, 14));
+		lblNewLabel_2.setBounds(441, 413, 212, 21);
+		contentPane.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("agora");
+		lblNewLabel_2_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				CriaContaTemp conta = new CriaContaTemp();
+				conta.setVisible(true);
+				
+			}
+		});
+		lblNewLabel_2_1.setForeground(new Color(0, 0, 255));
+		lblNewLabel_2_1.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblNewLabel_2_1.setBounds(620, 413, 44, 21);
+		contentPane.add(lblNewLabel_2_1);
 		
 		
 		
@@ -269,6 +299,4 @@ public class TelaLogin extends JFrame {
 		}
 	
 	}
-	
-	
 }
