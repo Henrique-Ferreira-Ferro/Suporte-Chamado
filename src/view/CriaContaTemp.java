@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -13,16 +15,20 @@ import java.awt.Color;
 import javax.swing.border.LineBorder;
 import java.awt.Toolkit;
 import java.awt.Panel;
+import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.awt.event.ActionEvent;
 
 public class CriaContaTemp extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
+	private JTextField txtNome;
+	private JTextField txtSenha;
+	private JTextField txtEmail;
+	private JTextField txtLogin;
+	private JTextField txtDepart;
 
 	/**
 	 * Launch the application.
@@ -60,57 +66,74 @@ public class CriaContaTemp extends JFrame {
 		lblNewLabel_2.setBounds(39, 209, 56, 13);
 		contentPane.add(lblNewLabel_2);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField.setColumns(10);
-		textField.setBounds(102, 209, 358, 19);
-		contentPane.add(textField);
+		txtNome = new JTextField();
+		txtNome.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtNome.setColumns(10);
+		txtNome.setBounds(102, 209, 358, 19);
+		contentPane.add(txtNome);
 		
 		JLabel lblNewLabel_2_1 = new JLabel("Senha");
 		lblNewLabel_2_1.setFont(new Font("Arial", Font.BOLD, 14));
 		lblNewLabel_2_1.setBounds(39, 250, 56, 13);
 		contentPane.add(lblNewLabel_2_1);
 		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_1.setColumns(10);
-		textField_1.setBounds(102, 250, 358, 19);
-		contentPane.add(textField_1);
+		txtSenha = new JTextField();
+		txtSenha.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtSenha.setColumns(10);
+		txtSenha.setBounds(102, 250, 358, 19);
+		contentPane.add(txtSenha);
 		
 		JLabel lblNewLabel_2_2 = new JLabel("Email");
 		lblNewLabel_2_2.setFont(new Font("Arial", Font.BOLD, 14));
 		lblNewLabel_2_2.setBounds(39, 291, 56, 13);
 		contentPane.add(lblNewLabel_2_2);
 		
-		textField_2 = new JTextField();
-		textField_2.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_2.setColumns(10);
-		textField_2.setBounds(102, 291, 358, 19);
-		contentPane.add(textField_2);
+		txtEmail = new JTextField();
+		txtEmail.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtEmail.setColumns(10);
+		txtEmail.setBounds(102, 291, 358, 19);
+		contentPane.add(txtEmail);
 		
 		JLabel lblNewLabel_2_3_1 = new JLabel("Login");
 		lblNewLabel_2_3_1.setFont(new Font("Arial", Font.BOLD, 14));
 		lblNewLabel_2_3_1.setBounds(39, 335, 56, 19);
 		contentPane.add(lblNewLabel_2_3_1);
 		
-		textField_3 = new JTextField();
-		textField_3.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_3.setColumns(10);
-		textField_3.setBounds(102, 335, 358, 19);
-		contentPane.add(textField_3);
+		txtLogin = new JTextField();
+		txtLogin.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtLogin.setColumns(10);
+		txtLogin.setBounds(102, 335, 358, 19);
+		contentPane.add(txtLogin);
 		
 		JLabel lblNewLabel_2_3_1_1 = new JLabel("Departamento");
 		lblNewLabel_2_3_1_1.setFont(new Font("Arial", Font.BOLD, 14));
 		lblNewLabel_2_3_1_1.setBounds(39, 379, 108, 19);
 		contentPane.add(lblNewLabel_2_3_1_1);
 		
-		textField_4 = new JTextField();
-		textField_4.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_4.setColumns(10);
-		textField_4.setBounds(157, 379, 303, 19);
-		contentPane.add(textField_4);
+		txtDepart = new JTextField();
+		txtDepart.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtDepart.setColumns(10);
+		txtDepart.setBounds(157, 379, 303, 19);
+		contentPane.add(txtDepart);
 		
 		JButton btnCadastrar = new JButton("CADASTRAR");
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				if(logicaVerificacao() == true) {
+					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+					setVisible(false);
+				}else {
+					JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro, preencha corretamente os campos");
+				}
+				
+				
+				
+			}
+
+			
+		});
 		btnCadastrar.setForeground(Color.WHITE);
 		btnCadastrar.setFont(new Font("Arial", Font.PLAIN, 12));
 		btnCadastrar.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
@@ -150,4 +173,73 @@ public class CriaContaTemp extends JFrame {
 		lblCadastro.setForeground(new Color(255, 255, 255));
 		lblCadastro.setFont(new Font("Arial", Font.BOLD, 20));
 	}
+	
+	
+	private boolean logicaVerificacao() {
+		
+		if(validarEmail() && validaUsuario() && validaSenha() && validaLogin() && validaDepartamento()) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	private boolean validaDepartamento() {
+		String departamento = txtDepart.getText();
+		if(departamento.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo departamento vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private boolean validaLogin() {
+		String login = txtLogin.getText();
+		if(login.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo login vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private boolean validaSenha() {
+		String senha = txtSenha.getText();
+		if(senha.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo senha vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private boolean validaUsuario() {
+		String usuario = txtNome.getText();
+		if(usuario.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo nome vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private boolean validarEmail() {
+		String email = txtEmail.getText();
+		String verificaRegx = "^(.+)@(\\S+)$"; 
+		Pattern padrao = Pattern.compile(verificaRegx);
+		Matcher cheque = padrao.matcher(email);
+		if(email.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo email vaziu, preencha corretamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else if(!cheque.matches()) {
+			JOptionPane.showMessageDialog(null, "Insira um email valido, caso contrario o cadastro não será efetuado", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	
+	
 }
