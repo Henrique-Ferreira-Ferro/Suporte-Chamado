@@ -1,24 +1,28 @@
 package view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
 import java.awt.Color;
-import javax.swing.border.LineBorder;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 public class SenhaEsquecida extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtEmail;
+	private JTextField varEmail;
 	private JLabel lblNewLabel_2;
 	private JLabel lblNewLabel_3;
 	private JButton btnEnviar;
@@ -27,6 +31,7 @@ public class SenhaEsquecida extends JFrame {
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -62,11 +67,11 @@ public class SenhaEsquecida extends JFrame {
 		lblNewLabel_1.setBounds(95, 206, 120, 13);
 		contentPane.add(lblNewLabel_1);
 		
-		txtEmail = new JTextField();
-		txtEmail.setFont(new Font("Arial", Font.BOLD, 12));
-		txtEmail.setBounds(95, 229, 302, 19);
-		contentPane.add(txtEmail);
-		txtEmail.setColumns(10);
+		varEmail = new JTextField();
+		varEmail.setFont(new Font("Arial", Font.BOLD, 12));
+		varEmail.setBounds(95, 229, 302, 19);
+		contentPane.add(varEmail);
+		varEmail.setColumns(10);
 		
 		lblNewLabel_2 = new JLabel("Iremos notificar a equipe tecnica que você esqueceu ");
 		lblNewLabel_2.setLabelFor(this);
@@ -80,6 +85,27 @@ public class SenhaEsquecida extends JFrame {
 		contentPane.add(lblNewLabel_3);
 		
 		btnEnviar = new JButton("Enviar");
+		btnEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String email = varEmail.getText();
+				
+				Pattern padrao = verificaEmail();
+				
+				Matcher cheque = padrao.matcher(email);
+				
+				if(email.isEmpty()) {
+					JOptionPane.showMessageDialog(null,"Preencha o campo, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
+				}else if(!cheque.matches()){
+					JOptionPane.showMessageDialog(null,"Preencha o campo corretamente, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
+				}else {
+					JOptionPane.showMessageDialog(null,"Uma notificação foi enviado para a equipe com sucesso!", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+					setVisible(false);
+				}
+			}
+
+			
+		});
 		btnEnviar.setForeground(Color.WHITE);
 		btnEnviar.setFont(new Font("Arial", Font.PLAIN, 10));
 		btnEnviar.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -91,5 +117,17 @@ public class SenhaEsquecida extends JFrame {
 		lblNewLabel_4.setIcon(new ImageIcon(SenhaEsquecida.class.getResource("/recursos/PesquisaSenha.png")));
 		lblNewLabel_4.setBounds(35, 36, 32, 32);
 		contentPane.add(lblNewLabel_4);
+	}
+	
+	/*
+	 * Metodos a parte para construção do sistema
+	 */
+	
+	
+	private Pattern verificaEmail() {
+		String verificaRegx = "^(.+)@(\\S+)$"; 
+		
+		Pattern padrao = Pattern.compile(verificaRegx);
+		return padrao;
 	}
 }
