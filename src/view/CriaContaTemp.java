@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class CriaContaTemp extends JFrame {
 
@@ -28,7 +30,6 @@ public class CriaContaTemp extends JFrame {
 	private JTextField txtSenha;
 	private JTextField txtEmail;
 	private JTextField txtLogin;
-	private JTextField txtDepart;
 
 	/**
 	 * Launch the application.
@@ -110,12 +111,6 @@ public class CriaContaTemp extends JFrame {
 		lblNewLabel_2_3_1_1.setBounds(39, 379, 108, 19);
 		contentPane.add(lblNewLabel_2_3_1_1);
 		
-		txtDepart = new JTextField();
-		txtDepart.setFont(new Font("Arial", Font.PLAIN, 13));
-		txtDepart.setColumns(10);
-		txtDepart.setBounds(157, 379, 303, 19);
-		contentPane.add(txtDepart);
-		
 		JButton btnCadastrar = new JButton("CADASTRAR");
 		btnCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -172,27 +167,24 @@ public class CriaContaTemp extends JFrame {
 		panel.add(lblCadastro);
 		lblCadastro.setForeground(new Color(255, 255, 255));
 		lblCadastro.setFont(new Font("Arial", Font.BOLD, 20));
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"recursos humanos", "comercial", "operacional", "financeiro", "juridico"}));
+		comboBox_1.setFont(new Font("Arial", Font.PLAIN, 13));
+		comboBox_1.setBounds(157, 379, 160, 21);
+		contentPane.add(comboBox_1);
 	}
 	
 	
 	private boolean logicaVerificacao() {
 		
-		if(validarEmail() && validaUsuario() && validaSenha() && validaLogin() && validaDepartamento()) {
+		if(validarEmail() && validaUsuario() && validaSenha() && validaLogin()) {
 			return true;
 		}else {
 			return false;
 		}
 	}
 
-	private boolean validaDepartamento() {
-		String departamento = txtDepart.getText();
-		if(departamento.trim().isBlank()) {
-			JOptionPane.showMessageDialog(null, "Não deixe o campo departamento vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}else {
-			return true;
-		}
-	}
 
 	private boolean validaLogin() {
 		String login = txtLogin.getText();
