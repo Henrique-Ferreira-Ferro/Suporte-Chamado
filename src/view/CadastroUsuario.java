@@ -1,20 +1,32 @@
 package view;
 
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import java.awt.Font;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import dao.ModuloConexao;
+import javax.swing.JTable;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+
+import net.proteanit.sql.DbUtils;
 
 public class CadastroUsuario extends JInternalFrame {
 
@@ -28,6 +40,12 @@ public class CadastroUsuario extends JInternalFrame {
 
 	private JComboBox boxDepart;
 	private JComboBox boxLevel;
+	
+	private static Connection con = null;
+	private static PreparedStatement pstm = null;
+	private static ResultSet rs = null;
+	private JTable table;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -140,16 +158,14 @@ public class CadastroUsuario extends JInternalFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(logicaVerificacao() == true) {
-					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-					txtLogin.setText("");
-					txtEmail.setText("");
-					txtNome.setText("");
-					txtSenha.setText("");
+					salvarUsuario();
+					limpar();
 				}else {
 					JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro, preencha corretamente os campos");
 				}
 				
 			}
+			
 		});
 		btnSalvar.setIcon(new ImageIcon(CadastroUsuario.class.getResource("/recursos/salve-.png")));
 		btnSalvar.setBounds(80, 515, 66, 66);
@@ -175,6 +191,20 @@ public class CadastroUsuario extends JInternalFrame {
 		boxDepart.setModel(new DefaultComboBoxModel(new String[] {"tecnologia", "recursos humanos", "comercial", "operacional", "financeiro", "juridico"}));
 		boxDepart.setBounds(181, 466, 160, 21);
 		getContentPane().add(boxDepart);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(125, 68, 418, 119);
+		getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"New column", "New column", "New column", "New column", "New column", "New column"
+			}
+		));
+		scrollPane.setViewportView(table);
 
 	}
 	
@@ -204,6 +234,11 @@ private boolean logicaVerificacao() {
 			JOptionPane.showMessageDialog(null, "Não deixe o campo senha vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}else {
+			try {
+				Integer.parseInt(senha);
+			}catch(NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Bateu o rosto no teclado foi? Não coloque senhas grandes e não coloque letras.");
+			}
 			return true;
 		}
 	}
@@ -237,7 +272,7 @@ private boolean logicaVerificacao() {
 	private boolean tecnicoNotIT() {
 		
 		String selectedLevel = (String) boxLevel.getSelectedItem();
-		String selectedDepart = (String) boxLevel.getSelectedItem();
+		String selectedDepart = (String) boxDepart.getSelectedItem();
 		
 		
 		if(selectedLevel.equals("Admin") && !selectedDepart.equals("tecnologia")) {
@@ -248,5 +283,40 @@ private boolean logicaVerificacao() {
 		}
 	}
 	
+	private void limpar() {
+		txtLogin.setText("");
+		txtEmail.setText("");
+		txtNome.setText("");
+		txtSenha.setText("");
+	}
 	
+	//INSERT INTO usuario (nomeUsu, senhaUsu, emailUsu, nivelUsu, loginUsu, idDepart)
+	
+	/*
+	 * Tudo que envolver conexao e comunicação com o banco ficara daqui para baixo
+	 * Por conta do tempo não irei separar em outra classe. Prioridade para o funcionamento do
+	 * sistema como um todo!
+	 */
+	private void salvarUsuario() {
+		String sql = "INSERT INTO usuario (nomeUsu,senhaUsu, emailUsu, nivelUsu, loginUsu, idDepart) VALUES(?,?,?,?,?,?)";
+		con = ModuloConexao.conector();
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtNome.getText());
+			pstm.setInt(2, Integer.parseInt(txtSenha.getText()));
+			pstm.setString(3, txtEmail.getText());
+			pstm.setString(4, (String) boxLevel.getSelectedItem());
+			pstm.setString(5, txtLogin.getText());
+			int posicaoDepart = boxDepart.getSelectedIndex() + 1;
+			pstm.setInt(6, posicaoDepart);
+			int ad = pstm.executeUpdate();
+			if(ad > 0) {
+				JOptionPane.showMessageDialog(null,"Usuario cadastrado com sucesso ao banco!");
+			}
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null,"Erro ao inserir no banco de dados: " + e);
+		}
+		
+	}
 }
