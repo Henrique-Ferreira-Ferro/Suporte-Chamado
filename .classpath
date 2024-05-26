@@ -8,5 +8,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="src/recursos/postgresql-42.7.2.jar"/>
 	<classpathentry kind="lib" path="src/recursos/mysql-connector-j-8.4.0.jar"/>
+	<classpathentry kind="lib" path="src/recursos/rs2xml.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
