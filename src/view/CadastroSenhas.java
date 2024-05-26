@@ -6,20 +6,27 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.ImageIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CadastroSenhas extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
+	private JTextField txtOrigem;
+	private JTextField txtLogin;
+	private JTextField txtEmail;
+	private JTextField txtSenha;
 	private JTextField textField_5;
+	private JTextArea textArea;
 
 	/**
 	 * Launch the application.
@@ -86,29 +93,29 @@ public class CadastroSenhas extends JInternalFrame {
 		getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_1.setBounds(162, 223, 408, 19);
-		getContentPane().add(textField_1);
-		textField_1.setColumns(10);
+		txtOrigem = new JTextField();
+		txtOrigem.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtOrigem.setBounds(162, 223, 408, 19);
+		getContentPane().add(txtOrigem);
+		txtOrigem.setColumns(10);
 		
-		textField_2 = new JTextField();
-		textField_2.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_2.setBounds(162, 266, 408, 19);
-		getContentPane().add(textField_2);
-		textField_2.setColumns(10);
+		txtLogin = new JTextField();
+		txtLogin.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtLogin.setBounds(162, 266, 408, 19);
+		getContentPane().add(txtLogin);
+		txtLogin.setColumns(10);
 		
-		textField_3 = new JTextField();
-		textField_3.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_3.setBounds(162, 307, 408, 19);
-		getContentPane().add(textField_3);
-		textField_3.setColumns(10);
+		txtEmail = new JTextField();
+		txtEmail.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtEmail.setBounds(162, 307, 408, 19);
+		getContentPane().add(txtEmail);
+		txtEmail.setColumns(10);
 		
-		textField_4 = new JTextField();
-		textField_4.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_4.setColumns(10);
-		textField_4.setBounds(162, 355, 408, 19);
-		getContentPane().add(textField_4);
+		txtSenha = new JTextField();
+		txtSenha.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtSenha.setColumns(10);
+		txtSenha.setBounds(162, 355, 408, 19);
+		getContentPane().add(txtSenha);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Pesquisar por Origem");
 		lblNewLabel_1_1.setFont(new Font("Arial", Font.BOLD, 14));
@@ -121,25 +128,43 @@ public class CadastroSenhas extends JInternalFrame {
 		getContentPane().add(textField_5);
 		textField_5.setColumns(10);
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		textArea.setFont(new Font("Arial", Font.PLAIN, 13));
 		textArea.setBounds(164, 392, 406, 100);
 		getContentPane().add(textArea);
 		
-		JLabel lblNewLabel_3_1 = new JLabel("");
-		lblNewLabel_3_1.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/salve-.png")));
-		lblNewLabel_3_1.setBounds(132, 522, 66, 66);
-		getContentPane().add(lblNewLabel_3_1);
+		JLabel btnSalvar = new JLabel("");
+		btnSalvar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				if(logicaVerificacao() == true) {
+					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+					txtLogin.setText("");
+					txtEmail.setText("");
+					txtOrigem.setText("");
+					txtSenha.setText("");
+					textArea.setText("");
+				}else {
+					JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro, preencha corretamente os campos");
+				}
+				
+				
+			}
+		});
+		btnSalvar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/salve-.png")));
+		btnSalvar.setBounds(132, 522, 66, 66);
+		getContentPane().add(btnSalvar);
 		
-		JLabel lblNewLabel_3_1_1 = new JLabel("");
-		lblNewLabel_3_1_1.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/alterar.png")));
-		lblNewLabel_3_1_1.setBounds(327, 522, 66, 66);
-		getContentPane().add(lblNewLabel_3_1_1);
+		JLabel btnAlterar = new JLabel("");
+		btnAlterar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/alterar.png")));
+		btnAlterar.setBounds(327, 522, 66, 66);
+		getContentPane().add(btnAlterar);
 		
-		JLabel lblNewLabel_3_2 = new JLabel("");
-		lblNewLabel_3_2.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/excluir.png")));
-		lblNewLabel_3_2.setBounds(516, 502, 66, 86);
-		getContentPane().add(lblNewLabel_3_2);
+		JLabel btnDeletar = new JLabel("");
+		btnDeletar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/excluir.png")));
+		btnDeletar.setBounds(516, 502, 66, 86);
+		getContentPane().add(btnDeletar);
 		
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/senha.png")));
@@ -148,4 +173,52 @@ public class CadastroSenhas extends JInternalFrame {
 
 		
 	}
+	
+private boolean logicaVerificacao() {
+		
+		if(validarEmail()  && validaSenha() && validaOrigem() ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	private boolean validaOrigem() {
+		String origem = txtOrigem.getText();
+		if(origem.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo login vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private boolean validaSenha() {
+		String senha = txtSenha.getText();
+		if(senha.trim().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo senha vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	
+	
+	private boolean validarEmail() {
+		String email = txtEmail.getText();
+		String verificaRegx = "^(.+)@(\\S+)$"; 
+		Pattern padrao = Pattern.compile(verificaRegx);
+		Matcher cheque = padrao.matcher(email);
+		if(email.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Não deixe o campo email vaziu, preencha corretamente!", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else if(!cheque.matches()) {
+			JOptionPane.showMessageDialog(null, "Insira um email valido, caso contrario o cadastro não será efetuado", "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
 }

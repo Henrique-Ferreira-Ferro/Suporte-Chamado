@@ -235,11 +235,16 @@ private boolean logicaVerificacao() {
 	}
 	
 	private boolean tecnicoNotIT() {
-		if(boxLevel.equals("Admin") && !boxDepart.equals("tecnologia")) {
+		
+		String selectedLevel = (String) boxLevel.getSelectedItem();
+		String selectedDepart = (String) boxLevel.getSelectedItem();
+		
+		
+		if(selectedLevel.equals("Admin") && !selectedDepart.equals("tecnologia")) {
 			JOptionPane.showMessageDialog(null, "Um usuario não pode ser Admin, se não for do departamento de tecnologia!");
-			return true;
-		}else {
 			return false;
+		}else {
+			return true;
 		}
 	}
 	

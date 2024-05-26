@@ -3,27 +3,24 @@ package view;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyVetoException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JInternalFrame;
-import javax.swing.JDesktopPane;
-import java.awt.Toolkit;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 public class TelaPrincipal extends JFrame {
 
@@ -42,6 +39,7 @@ public class TelaPrincipal extends JFrame {
 				try {
 					TelaPrincipal frame = new TelaPrincipal();
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -62,6 +60,7 @@ public class TelaPrincipal extends JFrame {
 				Date data = new Date();
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				lblHora.setText(sdf.format(data));
+				
 			}
 			
 		});
@@ -115,6 +114,13 @@ public class TelaPrincipal extends JFrame {
 		menuBar.add(mnNewMenu_4);
 		
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Abrir Chamado");
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AbrirChamado chamado = new AbrirChamado();
+				chamado.setVisible(true);
+				Interno.add(chamado);
+			}
+		});
 		mntmNewMenuItem_3.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		mnNewMenu_4.add(mntmNewMenuItem_3);
 		
