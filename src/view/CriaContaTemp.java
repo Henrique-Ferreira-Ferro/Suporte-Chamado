@@ -1,26 +1,30 @@
 package view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 import java.awt.Color;
-import javax.swing.border.LineBorder;
-import java.awt.Toolkit;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Panel;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
+
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import dao.ModuloConexao;
 
 public class CriaContaTemp extends JFrame {
 
@@ -30,7 +34,11 @@ public class CriaContaTemp extends JFrame {
 	private JTextField txtSenha;
 	private JTextField txtEmail;
 	private JTextField txtLogin;
+	private JComboBox boxDepart;
 
+	private Connection con;
+	private PreparedStatement pstm;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -117,6 +125,7 @@ public class CriaContaTemp extends JFrame {
 				
 				
 				if(logicaVerificacao() == true) {
+					salvar();
 					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 					setVisible(false);
 				}else {
@@ -168,11 +177,11 @@ public class CriaContaTemp extends JFrame {
 		lblCadastro.setForeground(new Color(255, 255, 255));
 		lblCadastro.setFont(new Font("Arial", Font.BOLD, 20));
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"recursos humanos", "comercial", "operacional", "financeiro", "juridico"}));
-		comboBox_1.setFont(new Font("Arial", Font.PLAIN, 13));
-		comboBox_1.setBounds(157, 379, 160, 21);
-		contentPane.add(comboBox_1);
+		boxDepart = new JComboBox();
+		boxDepart.setModel(new DefaultComboBoxModel(new String[] {"recursos humanos", "comercial", "operacional", "financeiro", "juridico"}));
+		boxDepart.setFont(new Font("Arial", Font.PLAIN, 13));
+		boxDepart.setBounds(157, 379, 160, 21);
+		contentPane.add(boxDepart);
 	}
 	
 	
@@ -202,6 +211,11 @@ public class CriaContaTemp extends JFrame {
 			JOptionPane.showMessageDialog(null, "Não deixe o campo senha vaziu, pois é importante", "Erro", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}else {
+			try {
+				Integer.parseInt(txtSenha.getText());
+			}catch(NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Não insira letras na senha e não coloque senhas grandes!");
+			}
 			return true;
 		}
 	}
@@ -232,6 +246,33 @@ public class CriaContaTemp extends JFrame {
 		}
 	}
 	
+	/*
+	 * Inserir no banco de dados
+	 */
+	
+	public void salvar() {
+		//INSERT INTO usuario (nomeUsu, senhaUsu, emailUsu, nivelUsu, loginUsu, idDepart)
+
+		String sql = "INSERT INTO usuario(nomeUsu,senhaUsu,emailUsu,nivelUsu,loginUsu,idDepart) VALUES(?,?,?,?,?,?)";
+		con = ModuloConexao.conector();
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtNome.getText());
+			pstm.setInt(2, Integer.parseInt(txtSenha.getText()));
+			pstm.setString(3, txtEmail.getText());
+			pstm.setString(4, "usuario"); //Para os que criarem a propria conta será dado a eles o nivel de usuario!
+			pstm.setString(5, txtLogin.getText());
+			int depart = boxDepart.getSelectedIndex() + 2;
+			pstm.setInt(6, depart);
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao cadastrar no banco!" + e);
+		}
+		
+		
+		
+		
+	}
 	
 	
 }
