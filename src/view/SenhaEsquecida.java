@@ -27,6 +27,7 @@ public class SenhaEsquecida extends JFrame {
 	private JLabel lblNewLabel_3;
 	private JButton btnEnviar;
 	private JLabel lblNewLabel_4;
+	private JTextField txtNome;
 
 	/**
 	 * Launch the application.
@@ -64,12 +65,12 @@ public class SenhaEsquecida extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("Digite seu Email: ");
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 13));
-		lblNewLabel_1.setBounds(95, 206, 120, 13);
+		lblNewLabel_1.setBounds(95, 230, 120, 13);
 		contentPane.add(lblNewLabel_1);
 		
 		varEmail = new JTextField();
 		varEmail.setFont(new Font("Arial", Font.BOLD, 12));
-		varEmail.setBounds(95, 229, 302, 19);
+		varEmail.setBounds(95, 253, 302, 19);
 		contentPane.add(varEmail);
 		varEmail.setColumns(10);
 		
@@ -94,12 +95,12 @@ public class SenhaEsquecida extends JFrame {
 				
 				Matcher cheque = padrao.matcher(email);
 				
-				if(email.isEmpty()) {
-					JOptionPane.showMessageDialog(null,"Preencha o campo, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
+				if(email.isEmpty() && txtNome.getText().isBlank()) {
+					JOptionPane.showMessageDialog(null,"Preencha os campos, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
 				}else if(!cheque.matches()){
 					JOptionPane.showMessageDialog(null,"Preencha o campo corretamente, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
 				}else {
-					JOptionPane.showMessageDialog(null,"Uma notificação foi enviado para a equipe com sucesso!", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null,"Um chamado foi aberto! Nossa equipe deve visualizar em breve!", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
 					setVisible(false);
 				}
 			}
@@ -110,13 +111,24 @@ public class SenhaEsquecida extends JFrame {
 		btnEnviar.setFont(new Font("Arial", Font.PLAIN, 10));
 		btnEnviar.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnEnviar.setBackground(new Color(79, 79, 253));
-		btnEnviar.setBounds(95, 282, 117, 21);
+		btnEnviar.setBounds(95, 306, 117, 21);
 		contentPane.add(btnEnviar);
 		
 		lblNewLabel_4 = new JLabel("");
 		lblNewLabel_4.setIcon(new ImageIcon(SenhaEsquecida.class.getResource("/recursos/PesquisaSenha.png")));
 		lblNewLabel_4.setBounds(35, 36, 32, 32);
 		contentPane.add(lblNewLabel_4);
+		
+		txtNome = new JTextField();
+		txtNome.setFont(new Font("Arial", Font.BOLD, 12));
+		txtNome.setColumns(10);
+		txtNome.setBounds(95, 201, 302, 19);
+		contentPane.add(txtNome);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Digite seu Nome: ");
+		lblNewLabel_1_1.setFont(new Font("Arial", Font.BOLD, 13));
+		lblNewLabel_1_1.setBounds(95, 178, 120, 13);
+		contentPane.add(lblNewLabel_1_1);
 	}
 	
 	/*
@@ -129,5 +141,18 @@ public class SenhaEsquecida extends JFrame {
 		
 		Pattern padrao = Pattern.compile(verificaRegx);
 		return padrao;
+	}
+	
+	/**
+	 * Envio de aviso ao menu principal - Vou ter que criar uma tabela no banco talvez não compense! 
+	 * 
+	 * Criar tela de chamado e liga-la ao banco, ai então baseado no nome e no email abriamos um chamado!
+	 * Mas antes deve ser verificado se essa pessoa existe no banco de dados. Se não existir será enviado uma
+	 * mensagem informando que não foi possivel inserir pois não existe
+	 */
+	
+	public void enviaNotificao() {
+		
+		
 	}
 }
