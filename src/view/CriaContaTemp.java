@@ -265,6 +265,14 @@ public class CriaContaTemp extends JFrame {
 			int depart = boxDepart.getSelectedIndex() + 2;
 			pstm.setInt(6, depart);
 			
+			int execu = pstm.executeUpdate();
+			
+			if(execu > 0) {
+				JOptionPane.showMessageDialog(null, "Criado usuario no banco com sucesso!!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Não foi possivel criar o usuario no banco de dados!!");
+			}
+			
 		}catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar no banco!" + e);
 		}

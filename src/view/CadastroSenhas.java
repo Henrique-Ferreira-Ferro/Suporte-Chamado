@@ -14,20 +14,27 @@ import javax.swing.JTextArea;
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CadastroSenhas extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField textField;
+	private JTextField txtId;
 	private JTextField txtOrigem;
 	private JTextField txtLogin;
 	private JTextField txtEmail;
 	private JTextField txtSenha;
 	private JTextField textField_5;
 	private JTextArea textArea;
-
+	
+	
+	private Connection con;
+	private PreparedStatement pstm;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -86,12 +93,12 @@ public class CadastroSenhas extends JInternalFrame {
 		lblNewLabel_6.setBounds(86, 346, 74, 28);
 		getContentPane().add(lblNewLabel_6);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField.setEnabled(false);
-		textField.setBounds(156, 171, 46, 19);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		txtId = new JTextField();
+		txtId.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtId.setEnabled(false);
+		txtId.setBounds(156, 171, 46, 19);
+		getContentPane().add(txtId);
+		txtId.setColumns(10);
 		
 		txtOrigem = new JTextField();
 		txtOrigem.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -221,4 +228,39 @@ private boolean logicaVerificacao() {
 		}
 	}
 	
-}
+	/*
+	 * Inserir no banco de dados
+	 * Abaixo se encontra o script para inserir no banco
+	 * 
+	 */
+	
+	//INSERT INTO senhasGerais (descricaoSen, senhaSen, emailSen, loginSen, origemSen, idUsu)
+
+	
+	private void inserir() {
+		
+		String sql = "INSERT INTO senhasGerais(descricaoSen, senhaSen, emailSen,loginSen,origemSen,idUsu) VALUES(?,?,?,?,?,?)";
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, textArea.getText());
+			pstm.setString(2, txtSenha.getText());
+			pstm.setString(3, txtEmail.getText());
+			pstm.setString(4, txtLogin.getText());
+			pstm.setString(5, txtOrigem.getText());
+			//Preciso pesquisar pelo cliente. Isso é associar a criação da senha com o usuario que está logado no sistema
+//			pstm.setInt(6, );
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao inserir no banco!");
+		}
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+}	

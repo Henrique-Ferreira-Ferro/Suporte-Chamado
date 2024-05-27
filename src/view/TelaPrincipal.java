@@ -29,6 +29,8 @@ public class TelaPrincipal extends JFrame {
 	private JLabel lblNome;
 	private JLabel lblHora;
 	private JDesktopPane Interno;
+	private JLabel lblAvisos;
+	
 	
 	/**
 	 * Launch the application.
@@ -213,9 +215,14 @@ public class TelaPrincipal extends JFrame {
 		 lblNome = new JLabel("Nome");
 		lblNome.setForeground(new Color(255, 255, 255));
 		lblNome.setFont(new Font("Arial", Font.BOLD, 20));
-		lblNome.setBounds(38, 460, 253, 26);
+		lblNome.setBounds(39, 405, 253, 26);
 		panel.add(lblNome);
 		
+		lblAvisos = new JLabel("Avisos");
+		lblAvisos.setForeground(Color.WHITE);
+		lblAvisos.setFont(new Font("Arial", Font.BOLD, 20));
+		lblAvisos.setBounds(118, 488, 72, 26);
+		panel.add(lblAvisos);
 		
 		
 	}
@@ -227,4 +234,16 @@ public class TelaPrincipal extends JFrame {
 	public void setLblNome(JLabel lblNome) {
 		this.lblNome = lblNome;
 	}
+	
+	
+	
+	public JLabel getLblAvisos() {
+		return lblAvisos;
+	}
+	
+	public void setLblAvisos(JLabel lblAvisos) {
+		this.lblAvisos = lblAvisos;
+	}
+	
+	
 }

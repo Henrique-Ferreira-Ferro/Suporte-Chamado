@@ -36,7 +36,7 @@ public class TelaLogin extends JFrame {
 	private static JTextField txtNome;
 	private static JPasswordField txtSenha;
 	private static JLabel lblEntrar;
-	
+	static TelaPrincipal telaPrincipal;
 	
 	static Connection con = null;
 	static PreparedStatement pstm = null;
@@ -282,7 +282,7 @@ public class TelaLogin extends JFrame {
 			rs = pstm.executeQuery();
 			
 			if(rs.next()) {
-				TelaPrincipal telaPrincipal = new TelaPrincipal();
+				telaPrincipal = new TelaPrincipal();
 				telaPrincipal.setVisible(true);
 				telaPrincipal.getLblNome().setText(rs.getString(2));
 				telaPrincipal.getLblNome().setForeground(Color.GREEN);
