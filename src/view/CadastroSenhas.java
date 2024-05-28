@@ -10,6 +10,10 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.JTextField;
+
+import dao.ModuloConexao;
+import entities.SessaoUsuario;
+
 import javax.swing.JTextArea;
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
@@ -34,6 +38,7 @@ public class CadastroSenhas extends JInternalFrame {
 	
 	private Connection con;
 	private PreparedStatement pstm;
+	private JTextField txtIdTecnico;
 	
 	/**
 	 * Launch the application.
@@ -55,6 +60,7 @@ public class CadastroSenhas extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public CadastroSenhas() {
+		setTitle("Cadastro Senha");
 		setFrameIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/CadastroSenha.png")));
 		setBounds(0, 0, 695, 640);
 		setIconifiable(true);
@@ -146,6 +152,7 @@ public class CadastroSenhas extends JInternalFrame {
 			public void mouseClicked(MouseEvent e) {
 				
 				if(logicaVerificacao() == true) {
+					inserir();
 					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 					txtLogin.setText("");
 					txtEmail.setText("");
@@ -177,7 +184,22 @@ public class CadastroSenhas extends JInternalFrame {
 		lblNewLabel.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/senha.png")));
 		lblNewLabel.setBounds(591, 34, 66, 66);
 		getContentPane().add(lblNewLabel);
+		
+		JLabel lblNewLabel_1_2 = new JLabel("ID Tecnico");
+		lblNewLabel_1_2.setFont(new Font("Arial", Font.BOLD, 14));
+		lblNewLabel_1_2.setBounds(415, 180, 83, 13);
+		getContentPane().add(lblNewLabel_1_2);
+		
+		txtIdTecnico = new JTextField();
+		txtIdTecnico.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtIdTecnico.setEnabled(false);
+		txtIdTecnico.setColumns(10);
+		txtIdTecnico.setBounds(524, 174, 46, 19);
+		getContentPane().add(txtIdTecnico);
 
+		int idUsuarioLogado = SessaoUsuario.getInstancia().getIdUsuario();
+		txtIdTecnico.setText(String.valueOf(idUsuarioLogado));
+		
 		
 	}
 	
@@ -242,6 +264,7 @@ private boolean logicaVerificacao() {
 		String sql = "INSERT INTO senhasGerais(descricaoSen, senhaSen, emailSen,loginSen,origemSen,idUsu) VALUES(?,?,?,?,?,?)";
 		
 		try {
+			con = ModuloConexao.conector();
 			pstm = con.prepareStatement(sql);
 			pstm.setString(1, textArea.getText());
 			pstm.setString(2, txtSenha.getText());
@@ -249,17 +272,22 @@ private boolean logicaVerificacao() {
 			pstm.setString(4, txtLogin.getText());
 			pstm.setString(5, txtOrigem.getText());
 			//Preciso pesquisar pelo cliente. Isso é associar a criação da senha com o usuario que está logado no sistema
-//			pstm.setInt(6, );
+			pstm.setInt(6, Integer.parseInt(txtIdTecnico.getText()));
 			
+			int exec = pstm.executeUpdate();
+			
+			if(exec > 0) {
+				JOptionPane.showMessageDialog(null, "Inserido no banco com sucesso!!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Não foi possivel inserir no banco de dados");
+			}
+		
 		}catch(SQLException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao inserir no banco!");
+			JOptionPane.showMessageDialog(null, "Erro ao inserir no banco! Erro: "+ e);
 		}
 		
 		
-		
 	}
-	
-	
 	
 	
 	

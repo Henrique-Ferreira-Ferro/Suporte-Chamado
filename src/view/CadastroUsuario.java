@@ -67,6 +67,7 @@ public class CadastroUsuario extends JInternalFrame {
 	 * @throws PropertyVetoException 
 	 */
 	public CadastroUsuario()  {
+		setTitle("Cadastro Usuario");
 		setFrameIcon(new ImageIcon(CadastroUsuario.class.getResource("/recursos/cadastroUsuario.png")));
 		setIconifiable(true);
 		setMaximizable(true);
