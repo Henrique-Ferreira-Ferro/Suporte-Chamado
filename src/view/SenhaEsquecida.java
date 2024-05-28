@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +22,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import dao.ModuloConexao;
+
 public class SenhaEsquecida extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -27,7 +33,11 @@ public class SenhaEsquecida extends JFrame {
 	private JLabel lblNewLabel_3;
 	private JButton btnEnviar;
 	private JLabel lblNewLabel_4;
-	private JTextField txtNome;
+	
+	
+	private Connection con;
+	private PreparedStatement pstm;
+	private ResultSet rs;
 
 	/**
 	 * Launch the application.
@@ -65,12 +75,12 @@ public class SenhaEsquecida extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("Digite seu Email: ");
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 13));
-		lblNewLabel_1.setBounds(95, 230, 120, 13);
+		lblNewLabel_1.setBounds(95, 198, 120, 13);
 		contentPane.add(lblNewLabel_1);
 		
 		varEmail = new JTextField();
 		varEmail.setFont(new Font("Arial", Font.BOLD, 12));
-		varEmail.setBounds(95, 253, 302, 19);
+		varEmail.setBounds(95, 221, 302, 19);
 		contentPane.add(varEmail);
 		varEmail.setColumns(10);
 		
@@ -95,8 +105,8 @@ public class SenhaEsquecida extends JFrame {
 				
 				Matcher cheque = padrao.matcher(email);
 				
-				if(email.isEmpty() && txtNome.getText().isBlank()) {
-					JOptionPane.showMessageDialog(null,"Preencha os campos, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
+				if(email.isEmpty()) {
+					JOptionPane.showMessageDialog(null,"Preencha o campo, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
 				}else if(!cheque.matches()){
 					JOptionPane.showMessageDialog(null,"Preencha o campo corretamente, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
 				}else {
@@ -111,24 +121,13 @@ public class SenhaEsquecida extends JFrame {
 		btnEnviar.setFont(new Font("Arial", Font.PLAIN, 10));
 		btnEnviar.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnEnviar.setBackground(new Color(79, 79, 253));
-		btnEnviar.setBounds(95, 306, 117, 21);
+		btnEnviar.setBounds(95, 274, 117, 21);
 		contentPane.add(btnEnviar);
 		
 		lblNewLabel_4 = new JLabel("");
 		lblNewLabel_4.setIcon(new ImageIcon(SenhaEsquecida.class.getResource("/recursos/PesquisaSenha.png")));
 		lblNewLabel_4.setBounds(35, 36, 32, 32);
 		contentPane.add(lblNewLabel_4);
-		
-		txtNome = new JTextField();
-		txtNome.setFont(new Font("Arial", Font.BOLD, 12));
-		txtNome.setColumns(10);
-		txtNome.setBounds(95, 201, 302, 19);
-		contentPane.add(txtNome);
-		
-		JLabel lblNewLabel_1_1 = new JLabel("Digite seu Nome: ");
-		lblNewLabel_1_1.setFont(new Font("Arial", Font.BOLD, 13));
-		lblNewLabel_1_1.setBounds(95, 178, 120, 13);
-		contentPane.add(lblNewLabel_1_1);
 	}
 	
 	/*
@@ -152,6 +151,24 @@ public class SenhaEsquecida extends JFrame {
 	 */
 	
 	public void enviaNotificao() {
+		//SELECT * FROM usuario WHERE emailUsu = 'henrique@fatec.sp';
+		
+		String sql = "SELECT * FROM usuario WHERE emailUsu = ?";
+		
+		con = ModuloConexao.conector();
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, varEmail.getText());
+			rs = pstm.executeQuery();
+			if(rs.next()) {
+				//Esqueci de criar a insert do chamado! Preciso 
+				
+				
+				
+			}
+		}catch(SQLException e) {
+			
+		}
 		
 		
 	}

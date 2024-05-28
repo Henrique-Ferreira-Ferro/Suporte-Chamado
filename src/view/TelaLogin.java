@@ -23,6 +23,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import dao.ModuloConexao;
+import entities.SessaoUsuario;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -282,6 +284,7 @@ public class TelaLogin extends JFrame {
 			rs = pstm.executeQuery();
 			
 			if(rs.next()) {
+				SessaoUsuario.getInstancia().setIdUsuario(rs.getInt("idUsu"));
 				telaPrincipal = new TelaPrincipal();
 				telaPrincipal.setVisible(true);
 				telaPrincipal.getLblNome().setText(rs.getString(2));
