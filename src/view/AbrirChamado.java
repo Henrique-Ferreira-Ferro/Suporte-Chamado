@@ -41,6 +41,7 @@ public class AbrirChamado extends JInternalFrame {
 	private JLabel txtHora;
 	private JTextField textField;
 	private JTable table;
+	private JTable table_1;
 	/**
 	 * Launch the application.
 	 */
@@ -83,47 +84,47 @@ public class AbrirChamado extends JInternalFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("ID");
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1.setBounds(72, 100, 28, 13);
+		lblNewLabel_1.setBounds(71, 207, 28, 13);
 		getContentPane().add(lblNewLabel_1);
 		
 		txtIdCha = new JTextField();
 		txtIdCha.setFont(new Font("Arial", Font.PLAIN, 13));
 		txtIdCha.setEnabled(false);
 		txtIdCha.setColumns(10);
-		txtIdCha.setBounds(110, 97, 59, 19);
+		txtIdCha.setBounds(109, 204, 59, 19);
 		getContentPane().add(txtIdCha);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Titulo");
 		lblNewLabel_1_1.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1_1.setBounds(72, 144, 48, 13);
+		lblNewLabel_1_1.setBounds(71, 246, 48, 13);
 		getContentPane().add(lblNewLabel_1_1);
 		
 		txtTitulo = new JTextField();
 		txtTitulo.setFont(new Font("Arial", Font.PLAIN, 13));
 		txtTitulo.setColumns(10);
-		txtTitulo.setBounds(161, 141, 169, 19);
+		txtTitulo.setBounds(160, 243, 169, 19);
 		getContentPane().add(txtTitulo);
 		
 		JLabel lblNewLabel_1_2 = new JLabel("Categoria");
 		lblNewLabel_1_2.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1_2.setBounds(72, 183, 80, 13);
+		lblNewLabel_1_2.setBounds(71, 284, 80, 13);
 		getContentPane().add(lblNewLabel_1_2);
 		
 		JLabel lblNewLabel_1_1_1 = new JLabel("Hora Criada");
 		lblNewLabel_1_1_1.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1_1_1.setBounds(72, 266, 91, 13);
+		lblNewLabel_1_1_1.setBounds(71, 323, 91, 13);
 		getContentPane().add(lblNewLabel_1_1_1);
 		
 		
 		
 		JLabel lblNewLabel_1_1_2 = new JLabel("Anexo");
 		lblNewLabel_1_1_2.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1_1_2.setBounds(72, 317, 48, 13);
+		lblNewLabel_1_1_2.setBounds(71, 363, 48, 13);
 		getContentPane().add(lblNewLabel_1_1_2);
 		
 		JLabel lblNewLabel_1_2_1 = new JLabel("Status");
 		lblNewLabel_1_2_1.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_1_2_1.setBounds(72, 220, 66, 13);
+		lblNewLabel_1_2_1.setBounds(369, 287, 66, 13);
 		getContentPane().add(lblNewLabel_1_2_1);
 		
 		JComboBox boxStatus = new JComboBox();
@@ -131,34 +132,34 @@ public class AbrirChamado extends JInternalFrame {
 		boxStatus.setEnabled(false);
 		boxStatus.setModel(new DefaultComboBoxModel(new String[] {"aberto", "em andamento", "fechado"}));
 		boxStatus.setFont(new Font("Arial", Font.BOLD, 12));
-		boxStatus.setBounds(161, 217, 169, 21);
+		boxStatus.setBounds(458, 284, 169, 21);
 		getContentPane().add(boxStatus);
 		
 		JComboBox boxCategoria = new JComboBox();
 		boxCategoria.setModel(new DefaultComboBoxModel(new String[] {"Help Desk", "Projetos", "Rede e Telefonia", "Hardware e Perifericos", "Software", "Servidores", "Especificações"}));
 		boxCategoria.setEditable(true);
 		boxCategoria.setFont(new Font("Arial", Font.BOLD, 12));
-		boxCategoria.setBounds(162, 180, 169, 21);
+		boxCategoria.setBounds(161, 281, 169, 21);
 		getContentPane().add(boxCategoria);
 		
 		JLabel lblNewLabel_3 = new JLabel("Comentario");
 		lblNewLabel_3.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_3.setBounds(72, 365, 163, 24);
+		lblNewLabel_3.setBounds(71, 391, 163, 24);
 		getContentPane().add(lblNewLabel_3);
 		
 		JTextArea txtComen = new JTextArea();
 		txtComen.setFont(new Font("Arial", Font.PLAIN, 13));
-		txtComen.setBounds(72, 399, 268, 100);
+		txtComen.setBounds(71, 425, 268, 100);
 		getContentPane().add(txtComen);
 		
 		JTextArea txtDesc = new JTextArea();
 		txtDesc.setFont(new Font("Arial", Font.PLAIN, 13));
-		txtDesc.setBounds(370, 399, 277, 100);
+		txtDesc.setBounds(369, 425, 277, 100);
 		getContentPane().add(txtDesc);
 		
 		JLabel lblNewLabel_3_1 = new JLabel("Descrição");
 		lblNewLabel_3_1.setFont(new Font("Arial", Font.BOLD, 14));
-		lblNewLabel_3_1.setBounds(370, 365, 163, 24);
+		lblNewLabel_3_1.setBounds(369, 391, 163, 24);
 		getContentPane().add(lblNewLabel_3_1);
 		
 		JButton btnArqui = new JButton("Escolher Arquivo");
@@ -197,12 +198,12 @@ public class AbrirChamado extends JInternalFrame {
 		btnArqui.setBackground(new Color(79, 79, 253));
 		btnArqui.setForeground(new Color(255, 255, 255));
 		btnArqui.setFont(new Font("Arial", Font.BOLD, 12));
-		btnArqui.setBounds(161, 314, 170, 21);
+		btnArqui.setBounds(160, 360, 170, 21);
 		getContentPane().add(btnArqui);
 		
 		txtHora = new JLabel("dd/mm/yyyy");
 		txtHora.setFont(new Font("Arial", Font.BOLD, 14));
-		txtHora.setBounds(175, 267, 155, 13);
+		txtHora.setBounds(174, 324, 155, 13);
 		getContentPane().add(txtHora);
 		
 		JPanel panel = new JPanel();
@@ -277,6 +278,39 @@ public class AbrirChamado extends JInternalFrame {
 		btnDeletar.setIcon(new ImageIcon(AbrirChamado.class.getResource("/recursos/excluir.png")));
 		btnDeletar.setBounds(517, 515, 66, 86);
 		getContentPane().add(btnDeletar);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		panel_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
+		panel_1.setBounds(38, 10, 301, 174);
+		getContentPane().add(panel_1);
+		
+		JLabel lblNewLabel_1_1_3_1_1 = new JLabel("Pesquisar Status");
+		lblNewLabel_1_1_3_1_1.setFont(new Font("Arial", Font.BOLD, 9));
+		lblNewLabel_1_1_3_1_1.setBounds(22, 14, 82, 13);
+		panel_1.add(lblNewLabel_1_1_3_1_1);
+		
+		JComboBox boxStatusPesqui = new JComboBox();
+		boxStatusPesqui.setEditable(true);
+		boxStatusPesqui.setModel(new DefaultComboBoxModel(new String[] {"aberto", "em andamento", "fechado"}));
+		boxStatusPesqui.setForeground(Color.BLACK);
+		boxStatusPesqui.setFont(new Font("Arial", Font.BOLD, 12));
+		boxStatusPesqui.setBounds(22, 37, 169, 21);
+		panel_1.add(boxStatusPesqui);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(22, 77, 269, 87);
+		panel_1.add(scrollPane_1);
+		
+		table_1 = new JTable();
+		table_1.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Id", "Titulo"
+			}
+		));
+		scrollPane_1.setViewportView(table_1);
 
 	}
 	
@@ -297,14 +331,20 @@ public class AbrirChamado extends JInternalFrame {
 	 */
 	
 	
+	/*
+	 * Pesquisa avançada no banco pelo nome do usuario
+	 */
 	public  void procurarUsuario() {
 		
+		
+		
+		
 	}
+	
+	
+	
 	
 	public void criarChamado() {
 		
 	}
-	
-	
-	
 }
