@@ -5,7 +5,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,20 +23,22 @@ import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import dao.ModuloConexao;
+import net.proteanit.sql.DbUtils;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class AbrirChamado extends JInternalFrame {
 
@@ -39,9 +47,17 @@ public class AbrirChamado extends JInternalFrame {
 	private JTextField txtTitulo;
 	private JTextField txtIdUsu;
 	private JLabel txtHora;
-	private JTextField textField;
-	private JTable table;
-	private JTable table_1;
+	private JTextField txtPesquisaNome;
+	private JTable tblUsuario;
+	private JTable tblStatus;
+	private JComboBox boxStatus;
+	private JComboBox boxCategoria;
+	private JComboBox boxStatusPesqui;
+	
+	private Connection con;
+	private PreparedStatement pstm;
+	private ResultSet rs;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -127,7 +143,7 @@ public class AbrirChamado extends JInternalFrame {
 		lblNewLabel_1_2_1.setBounds(369, 287, 66, 13);
 		getContentPane().add(lblNewLabel_1_2_1);
 		
-		JComboBox boxStatus = new JComboBox();
+		boxStatus = new JComboBox();
 		boxStatus.setForeground(new Color(0, 0, 0));
 		boxStatus.setEnabled(false);
 		boxStatus.setModel(new DefaultComboBoxModel(new String[] {"aberto", "em andamento", "fechado"}));
@@ -135,7 +151,7 @@ public class AbrirChamado extends JInternalFrame {
 		boxStatus.setBounds(458, 284, 169, 21);
 		getContentPane().add(boxStatus);
 		
-		JComboBox boxCategoria = new JComboBox();
+		boxCategoria = new JComboBox();
 		boxCategoria.setModel(new DefaultComboBoxModel(new String[] {"Help Desk", "Projetos", "Rede e Telefonia", "Hardware e Perifericos", "Software", "Servidores", "Especificações"}));
 		boxCategoria.setEditable(true);
 		boxCategoria.setFont(new Font("Arial", Font.BOLD, 12));
@@ -218,17 +234,26 @@ public class AbrirChamado extends JInternalFrame {
 		lblNewLabel_1_1_3.setFont(new Font("Arial", Font.BOLD, 9));
 		
 		txtIdUsu = new JTextField();
+		txtIdUsu.setEnabled(false);
 		txtIdUsu.setBounds(236, 10, 45, 19);
 		panel.add(txtIdUsu);
 		txtIdUsu.setFont(new Font("Arial", Font.PLAIN, 13));
-		txtIdUsu.setEnabled(false);
 		txtIdUsu.setColumns(10);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Arial", Font.BOLD, 9));
-		textField.setBounds(22, 32, 134, 19);
-		panel.add(textField);
-		textField.setColumns(10);
+		txtPesquisaNome = new JTextField();
+		txtPesquisaNome.addKeyListener(new KeyAdapter() {
+			@Override
+			//Pesquisa avançada enquanto o usuario digita no campo de pesquisa
+			public void keyReleased(KeyEvent e) {
+				
+				procurarUsuario();
+				
+			}
+		});
+		txtPesquisaNome.setFont(new Font("Arial", Font.BOLD, 9));
+		txtPesquisaNome.setBounds(22, 32, 134, 19);
+		panel.add(txtPesquisaNome);
+		txtPesquisaNome.setColumns(10);
 		
 		JLabel lblNewLabel_1_1_3_1 = new JLabel("Pesquisar Nome");
 		lblNewLabel_1_1_3_1.setFont(new Font("Arial", Font.BOLD, 9));
@@ -239,15 +264,22 @@ public class AbrirChamado extends JInternalFrame {
 		scrollPane.setBounds(22, 72, 259, 92);
 		panel.add(scrollPane);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+		tblUsuario = new JTable();
+		tblUsuario.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				modificaIdUsuario();
+			}
+		});
+		tblUsuario.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
 				"ID", "Nome"
 			}
 		));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(tblUsuario);
 		
 		JLabel btnSalvar = new JLabel("");
 		btnSalvar.addMouseListener(new MouseAdapter() {
@@ -290,7 +322,12 @@ public class AbrirChamado extends JInternalFrame {
 		lblNewLabel_1_1_3_1_1.setBounds(22, 14, 82, 13);
 		panel_1.add(lblNewLabel_1_1_3_1_1);
 		
-		JComboBox boxStatusPesqui = new JComboBox();
+		boxStatusPesqui = new JComboBox();
+		boxStatusPesqui.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				pesquisarChamado();
+			}
+		});
 		boxStatusPesqui.setEditable(true);
 		boxStatusPesqui.setModel(new DefaultComboBoxModel(new String[] {"aberto", "em andamento", "fechado"}));
 		boxStatusPesqui.setForeground(Color.BLACK);
@@ -302,15 +339,15 @@ public class AbrirChamado extends JInternalFrame {
 		scrollPane_1.setBounds(22, 77, 269, 87);
 		panel_1.add(scrollPane_1);
 		
-		table_1 = new JTable();
-		table_1.setModel(new DefaultTableModel(
+		tblStatus = new JTable();
+		tblStatus.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
 				"Id", "Titulo"
 			}
 		));
-		scrollPane_1.setViewportView(table_1);
+		scrollPane_1.setViewportView(tblStatus);
 
 	}
 	
@@ -335,13 +372,57 @@ public class AbrirChamado extends JInternalFrame {
 	 * Pesquisa avançada no banco pelo nome do usuario
 	 */
 	public  void procurarUsuario() {
+		String sql = "SELECT idUsu as Id,nomeUsu as Nome FROM usuario WHERE nomeUsu LIKE ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtPesquisaNome.getText() + "%");
+			rs = pstm.executeQuery();
+			//Usando a biblioteca rs2xml
+			tblUsuario.setModel(DbUtils.resultSetToTableModel(rs));
+			
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null,"Erro ao pesquisar: "+ e);
+		}
+		
+	}
+	
+	// Metodo para modificar os campos ao clicar na tabela, no caso vou modificar o ID do usuario
+	
+	public void modificaIdUsuario() {
+		int setar = tblUsuario.getSelectedRow();		
+		
+		txtIdUsu.setText(tblUsuario.getModel().getValueAt(setar, 0).toString());
+		
+		
+	}
+	
+	/*
+	 * Pesquisa avançada pelo chamado
+	 */
+	
+	public void pesquisarChamado() {
+		
+		String sql = "SELECT idCha, tituloCha FROM chamado WHERE statusCha = ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, boxStatusPesqui.getSelectedItem().toString());
+			rs = pstm.executeQuery();
+			tblStatus.setModel(DbUtils.resultSetToTableModel(rs));
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao pesquisar pelo chamado: "+ e);
+		}
 		
 		
 		
 		
 	}
-	
-	
 	
 	
 	public void criarChamado() {
