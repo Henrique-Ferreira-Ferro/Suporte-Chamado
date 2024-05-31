@@ -1,4 +1,4 @@
-package entities;
+package pattersAndLogic;
 
 public class SessaoUsuario {
 	

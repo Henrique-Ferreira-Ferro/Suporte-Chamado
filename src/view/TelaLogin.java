@@ -23,7 +23,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import dao.ModuloConexao;
-import entities.SessaoUsuario;
+import pattersAndLogic.SessaoUsuario;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
