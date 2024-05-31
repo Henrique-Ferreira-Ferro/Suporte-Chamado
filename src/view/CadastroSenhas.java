@@ -12,7 +12,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 
 import dao.ModuloConexao;
-import entities.SessaoUsuario;
+import pattersAndLogic.SessaoUsuario;
 
 import javax.swing.JTextArea;
 import javax.swing.ImageIcon;

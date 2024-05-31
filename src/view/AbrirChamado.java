@@ -8,10 +8,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,6 +37,8 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.ModuloConexao;
 import net.proteanit.sql.DbUtils;
+import pattersAndLogic.SessaoUsuario;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.ItemListener;
@@ -53,10 +57,18 @@ public class AbrirChamado extends JInternalFrame {
 	private JComboBox boxStatus;
 	private JComboBox boxCategoria;
 	private JComboBox boxStatusPesqui;
+	private String filename;
+	private int returnValue;
+	private FileInputStream arquivoFinal;
+	
+	private JTextArea txtComen;
+	private JTextArea txtDesc;
 	
 	private Connection con;
 	private PreparedStatement pstm;
 	private ResultSet rs;
+	
+	private SimpleDateFormat sdf;
 	
 	/**
 	 * Launch the application.
@@ -85,7 +97,7 @@ public class AbrirChamado extends JInternalFrame {
 			@Override
 			public void internalFrameActivated(InternalFrameEvent e) {
 				Date data = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				sdf = new SimpleDateFormat("yyyy/MM/dd");
 				txtHora.setText(sdf.format(data));
 			}
 		});
@@ -144,8 +156,8 @@ public class AbrirChamado extends JInternalFrame {
 		getContentPane().add(lblNewLabel_1_2_1);
 		
 		boxStatus = new JComboBox();
+		boxStatus.setEditable(true);
 		boxStatus.setForeground(new Color(0, 0, 0));
-		boxStatus.setEnabled(false);
 		boxStatus.setModel(new DefaultComboBoxModel(new String[] {"aberto", "em andamento", "fechado"}));
 		boxStatus.setFont(new Font("Arial", Font.BOLD, 12));
 		boxStatus.setBounds(458, 284, 169, 21);
@@ -163,12 +175,12 @@ public class AbrirChamado extends JInternalFrame {
 		lblNewLabel_3.setBounds(71, 391, 163, 24);
 		getContentPane().add(lblNewLabel_3);
 		
-		JTextArea txtComen = new JTextArea();
+		txtComen = new JTextArea();
 		txtComen.setFont(new Font("Arial", Font.PLAIN, 13));
 		txtComen.setBounds(71, 425, 268, 100);
 		getContentPane().add(txtComen);
 		
-		JTextArea txtDesc = new JTextArea();
+		txtDesc = new JTextArea();
 		txtDesc.setFont(new Font("Arial", Font.PLAIN, 13));
 		txtDesc.setBounds(369, 425, 277, 100);
 		getContentPane().add(txtDesc);
@@ -189,7 +201,7 @@ public class AbrirChamado extends JInternalFrame {
 						if (f.isDirectory()) {
 							return true;
 						} else {
-							String filename = f.getName().toLowerCase();
+							filename = f.getName().toLowerCase();
 							return filename.endsWith(".pdf") || filename.endsWith(".txt") || filename.endsWith(".jpg") || filename.endsWith(".png");
 						}
 					}
@@ -200,13 +212,17 @@ public class AbrirChamado extends JInternalFrame {
 					}
 				});
 				
-				int returnValue = fileChooser.showOpenDialog(null);
+				returnValue = fileChooser.showOpenDialog(null);
 				
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					File[] selectedFiles = fileChooser.getSelectedFiles();
-					for (File file : selectedFiles) {
-						System.out.println("Arquivo selecionado: " + file.getAbsolutePath());
+					File selectedFile = fileChooser.getSelectedFile();
+					try {
+		                arquivoFinal = new FileInputStream(selectedFile);
+
+					}catch(Exception ex){
+		                JOptionPane.showMessageDialog(null, "Erro ao carregar o arquivo: " + ex.getMessage());
 					}
+					
 				}
 				
 			}
@@ -239,6 +255,10 @@ public class AbrirChamado extends JInternalFrame {
 		panel.add(txtIdUsu);
 		txtIdUsu.setFont(new Font("Arial", Font.PLAIN, 13));
 		txtIdUsu.setColumns(10);
+		
+		
+		int idUsuarioLogado = SessaoUsuario.getInstancia().getIdUsuario();
+		txtIdUsu.setText(String.valueOf(idUsuarioLogado));
 		
 		txtPesquisaNome = new JTextField();
 		txtPesquisaNome.addKeyListener(new KeyAdapter() {
@@ -288,7 +308,9 @@ public class AbrirChamado extends JInternalFrame {
 				
 				if(validaTitulo() == false) {
 					JOptionPane.showMessageDialog(null, "Precisa comprir os requisitos para haver o cadastramento");
+					
 				}else {
+					criarChamado();
 					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
 					txtTitulo.setText("");
 					txtDesc.setText("");
@@ -298,18 +320,13 @@ public class AbrirChamado extends JInternalFrame {
 			}
 		});
 		btnSalvar.setIcon(new ImageIcon(AbrirChamado.class.getResource("/recursos/salve-.png")));
-		btnSalvar.setBounds(133, 535, 66, 66);
+		btnSalvar.setBounds(196, 535, 66, 66);
 		getContentPane().add(btnSalvar);
 		
 		JLabel btnAlterar = new JLabel("");
 		btnAlterar.setIcon(new ImageIcon(AbrirChamado.class.getResource("/recursos/alterar.png")));
-		btnAlterar.setBounds(328, 535, 66, 66);
+		btnAlterar.setBounds(391, 535, 66, 66);
 		getContentPane().add(btnAlterar);
-		
-		JLabel btnDeletar = new JLabel("");
-		btnDeletar.setIcon(new ImageIcon(AbrirChamado.class.getResource("/recursos/excluir.png")));
-		btnDeletar.setBounds(517, 515, 66, 86);
-		getContentPane().add(btnDeletar);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
@@ -424,8 +441,88 @@ public class AbrirChamado extends JInternalFrame {
 		
 	}
 	
+	/*
+	 * Insert do CRUD
+	 */
 	
 	public void criarChamado() {
+		//INSERT INTO chamado (tituloCha,categoriaCha, horaCriCha, anexoCha,statusCha, comentarioCha, descricaoCha, idUsu)
+		String sql = "INSERT INTO chamado(tituloCha,categoriaCha,horaCriCha,anexoCha,statusCha,comentarioCha,descricaoCha,idUsu) "
+				+ "VALUES (?,?,?,?,?,?,?,?)";
+		
+		con = ModuloConexao.conector();
+		
+		Date data = null;
+		// Preciso converter de date para sql.date, porque o pstm não vai deixar inserir no banco como string
+		try {
+			data = sdf.parse(txtHora.getText());
+		} catch (ParseException e) {
+			System.out.println("Não foi possivel realizar a conversar: "+ e);
+		}
+		java.sql.Date dataSql = new java.sql.Date(data.getTime());
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtTitulo.getText());
+			pstm.setString(2, boxCategoria.getSelectedItem().toString());
+			pstm.setDate(3, dataSql);
+			pstm.setBlob(4, arquivoFinal);
+			pstm.setString(5, boxStatus.getSelectedItem().toString());
+			pstm.setString(6, txtComen.getText());
+			pstm.setString(7, txtDesc.getText());
+			if(!txtIdUsu.getText().trim().isEmpty()) {
+				pstm.setInt(8, Integer.parseInt(txtIdUsu.getText()));
+			}else {
+				JOptionPane.showMessageDialog(null, "Não deixe o campo id do usuario vaziu! Selecione seu Id ou de outro usuario");
+			}
+			
+			
+			int execute = pstm.executeUpdate();
+			
+			if(execute > 0) {
+				JOptionPane.showMessageDialog(null, "Inserido no banco de dados com sucesso!");
+			}
+			
+			}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar inserir no banco de dados! "+ e);
+		}
+	}
+	
+	/*
+	 * Metodo Update do CRUD
+	 */
+	
+	
+	public void alterarChamado() {
+		
+		/*
+		 * CREATE TABLE chamado (
+    	idCha INT NOT NULL AUTO_INCREMENT,
+    	tituloCha VARCHAR(100) NOT NULL,
+    	categoriaCha VARCHAR(50),
+    	horaCriCha DATE,
+    	anexoCha BLOB,
+    	statusCha VARCHAR(45) NOT NULL DEFAULT 'aberto',
+    	comentarioCha TEXT,
+    	descricaoCha TEXT,
+   		idUsu INT NOT NULL,
+    	PRIMARY KEY (idCha),
+    	FOREIGN KEY (idUsu) REFERENCES usuario (idUsu)
+);
+		 */
+		
+		//UPDATE chamado set tituloCha = 'Arrumar bateria', categoriaCha = 'Hardware e Perifericos', horaCricha = NOW(),statusCha = 'fechado',
+		//comentarioCha = 'Problema na bateria chefia', idUsu = 1 WHERE idCha = 1;
+		String sql = "";
+		
+		
+		
+		
+		
 		
 	}
+	
+	
+	
+	
 }
