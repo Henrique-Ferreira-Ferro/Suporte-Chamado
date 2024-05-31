@@ -27,12 +27,14 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
 import net.proteanit.sql.DbUtils;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CadastroUsuario extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField txtPesquisaNome;
+	private JTextField txtIdUsu;
 	private JTextField txtNome;
 	private JTextField txtSenha;
 	private JTextField txtEmail;
@@ -44,7 +46,10 @@ public class CadastroUsuario extends JInternalFrame {
 	private static Connection con = null;
 	private static PreparedStatement pstm = null;
 	private static ResultSet rs = null;
-	private JTable table;
+	private JTable tbUsuario;
+	
+	
+	
 	
 	/**
 	 * Launch the application.
@@ -91,11 +96,17 @@ public class CadastroUsuario extends JInternalFrame {
 		lblNewLabel_2.setBounds(70, 249, 56, 13);
 		getContentPane().add(lblNewLabel_2);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField.setBounds(125, 35, 366, 19);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		txtPesquisaNome = new JTextField();
+		txtPesquisaNome.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				pesquisaAvancada();
+			}
+		});
+		txtPesquisaNome.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtPesquisaNome.setBounds(125, 35, 366, 19);
+		getContentPane().add(txtPesquisaNome);
+		txtPesquisaNome.setColumns(10);
 		
 		JLabel lblNewLabel_2_1 = new JLabel("Senha");
 		lblNewLabel_2_1.setFont(new Font("Arial", Font.BOLD, 14));
@@ -117,12 +128,12 @@ public class CadastroUsuario extends JInternalFrame {
 		lblNewLabel_2_3_1.setBounds(70, 422, 56, 19);
 		getContentPane().add(lblNewLabel_2_3_1);
 		
-		textField_1 = new JTextField();
-		textField_1.setEnabled(false);
-		textField_1.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_1.setBounds(133, 210, 45, 19);
-		getContentPane().add(textField_1);
-		textField_1.setColumns(10);
+		txtIdUsu = new JTextField();
+		txtIdUsu.setEnabled(false);
+		txtIdUsu.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtIdUsu.setBounds(133, 210, 45, 19);
+		getContentPane().add(txtIdUsu);
+		txtIdUsu.setColumns(10);
 		
 		txtNome = new JTextField();
 		txtNome.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -178,6 +189,17 @@ public class CadastroUsuario extends JInternalFrame {
 		getContentPane().add(btnGravar);
 		
 		JLabel btnDeletar = new JLabel("");
+		btnDeletar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(txtIdUsu.getText() == "") {
+					JOptionPane.showMessageDialog(null, "Selecione um usuario na tabela para exclui-lo!");
+				}else {
+					deleteUser();
+					limpar();
+				}
+			}
+		});
 		btnDeletar.setIcon(new ImageIcon(CadastroUsuario.class.getResource("/recursos/excluir.png")));
 		btnDeletar.setBounds(464, 495, 66, 86);
 		getContentPane().add(btnDeletar);
@@ -194,18 +216,24 @@ public class CadastroUsuario extends JInternalFrame {
 		getContentPane().add(boxDepart);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(125, 68, 418, 119);
+		scrollPane.setBounds(125, 68, 507, 119);
 		getContentPane().add(scrollPane);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+		tbUsuario = new JTable();
+		tbUsuario.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setagemCampos();
+			}
+		});
+		tbUsuario.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"New column", "New column", "New column", "New column", "New column", "New column"
+				"ID", "Nome", "Senha", "Email", "Nivel", "Login", "Departamento"
 			}
 		));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(tbUsuario);
 
 	}
 	
@@ -298,6 +326,10 @@ private boolean logicaVerificacao() {
 	 * Por conta do tempo não irei separar em outra classe. Prioridade para o funcionamento do
 	 * sistema como um todo!
 	 */
+	
+	/*
+	 * Metodo INSERT do CRUD
+	 */
 	private void salvarUsuario() {
 		String sql = "INSERT INTO usuario (nomeUsu,senhaUsu, emailUsu, nivelUsu, loginUsu, idDepart) VALUES(?,?,?,?,?,?)";
 		con = ModuloConexao.conector();
@@ -320,4 +352,75 @@ private boolean logicaVerificacao() {
 		}
 		
 	}
+	
+	
+	/*
+	 * Delete do CRUD
+	 */
+	
+	private void deleteUser() {
+		String sql = "DELETE FROM usuario WHERE idUsu = ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setInt(1, Integer.parseInt(txtIdUsu.getText()));
+			int delete = pstm.executeUpdate();
+			if(delete > 0) {
+				JOptionPane.showMessageDialog(null, "Apagado com sucesso do banco!!");
+			}
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar apagar do banco. O Usuario já abriu um chamado e por isso não pode ser deletado!: ");
+			
+		}
+		
+	}
+	
+	
+	
+	private void pesquisaAvancada() {
+		//SELECT idUsu, nomeUsu, senhaUsu, emailUsu, nivelUsu, loginUsu, idDepart FROM usuario WHERE idUsu = 1;
+
+		String sql = "SELECT idUsu as ID, nomeUsu as Nome, senhaUsu as Senha,"
+				+ " emailUsu as Email , nivelUsu as Nivel, loginUsu as Login, idDepart FROM usuario WHERE nomeUsu Like ?";
+		
+		con = ModuloConexao.conector();
+		
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtPesquisaNome.getText() + "%");
+			rs = pstm.executeQuery();
+			tbUsuario.setModel(DbUtils.resultSetToTableModel(rs));
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro na pesquisa aplicada: "+ e);
+		}
+		
+		
+	}
+	
+	/*
+	 * Setagem dos campos, ao clicar em uma linha da tabela os campos de textos teram seus valores substituidos
+	 */
+	
+	private void setagemCampos() {
+		int setar = tbUsuario.getSelectedRow();
+		
+		txtIdUsu.setText(tbUsuario.getModel().getValueAt(setar, 0).toString());
+		txtNome.setText(tbUsuario.getModel().getValueAt(setar, 1).toString());
+		txtSenha.setText(tbUsuario.getModel().getValueAt(setar, 2).toString());
+		txtEmail.setText(tbUsuario.getModel().getValueAt(setar, 3).toString());
+		boxLevel.setSelectedItem(tbUsuario.getModel().getValueAt(setar, 4).toString());
+		txtLogin.setText(tbUsuario.getModel().getValueAt(setar, 5).toString());
+		int idDepart = Integer.parseInt(tbUsuario.getModel().getValueAt(setar, 6).toString());
+		boxDepart.setSelectedIndex(idDepart - 1);  // lembrando que para inserir um departamento foi feito o esquema de pegar pelo indice    
+	}
+	
+	
+	
+	
+	
+	
 }
