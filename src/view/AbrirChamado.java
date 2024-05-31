@@ -312,9 +312,7 @@ public class AbrirChamado extends JInternalFrame {
 				}else {
 					criarChamado();
 					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
-					txtTitulo.setText("");
-					txtDesc.setText("");
-					txtComen.setText("");
+					limparCampos();
 					
 				}
 			}
@@ -324,6 +322,22 @@ public class AbrirChamado extends JInternalFrame {
 		getContentPane().add(btnSalvar);
 		
 		JLabel btnAlterar = new JLabel("");
+		btnAlterar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				if(validaTitulo() == false) {
+					JOptionPane.showMessageDialog(null, "Precisa comprir os requisitos para haver o cadastramento");
+					
+				}else {
+					alterarChamado();
+					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+					limparCampos();
+				}
+				
+				
+			}
+		});
 		btnAlterar.setIcon(new ImageIcon(AbrirChamado.class.getResource("/recursos/alterar.png")));
 		btnAlterar.setBounds(391, 535, 66, 66);
 		getContentPane().add(btnAlterar);
@@ -331,7 +345,7 @@ public class AbrirChamado extends JInternalFrame {
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
-		panel_1.setBounds(38, 10, 301, 174);
+		panel_1.setBounds(10, 10, 353, 174);
 		getContentPane().add(panel_1);
 		
 		JLabel lblNewLabel_1_1_3_1_1 = new JLabel("Pesquisar Status");
@@ -353,10 +367,16 @@ public class AbrirChamado extends JInternalFrame {
 		panel_1.add(boxStatusPesqui);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(22, 77, 269, 87);
+		scrollPane_1.setBounds(10, 77, 333, 87);
 		panel_1.add(scrollPane_1);
 		
 		tblStatus = new JTable();
+		tblStatus.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setarCampos();
+			}
+		});
 		tblStatus.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
@@ -377,6 +397,21 @@ public class AbrirChamado extends JInternalFrame {
 			return true;
 		}
 	}
+	
+	/*
+	 * Metodo para limpar os campos
+	 */
+	
+	public void limparCampos() {
+		txtTitulo.setText("");
+		txtPesquisaNome.setText("");
+		txtIdUsu.setText("");
+		txtIdCha.setText("");
+		txtDesc.setText("");
+		txtComen.setText("");
+		
+	}
+	
 	
 	/*
 	 *Abaixo se encontra tudo relativo ao banco de dados
@@ -423,7 +458,9 @@ public class AbrirChamado extends JInternalFrame {
 	
 	public void pesquisarChamado() {
 		
-		String sql = "SELECT idCha, tituloCha FROM chamado WHERE statusCha = ?";
+		String sql = "SELECT idCha as ID\r\n"
+				+ ", tituloCha as Titulo, categoriaCha as Categoria,horaCriCha as Hora,"
+				+ "anexoCha as Anexo,statusCha as status,comentarioCha as Coment,descricaoCha as Des,idUsu FROM chamado WHERE statusCha = ?";
 		
 		con = ModuloConexao.conector();
 		
@@ -489,38 +526,82 @@ public class AbrirChamado extends JInternalFrame {
 	}
 	
 	/*
+	 * Ao clicar na linha da tabela de chamados, será substituido os valores nos campos de titulo, descrição 
+	 * dentre outros
+	 */
+	
+	public void setarCampos() {
+		
+		
+		int linhaSelec = tblStatus.getSelectedRow();
+		
+		Object idCha = tblStatus.getModel().getValueAt(linhaSelec, 0);
+	    Object titulo = tblStatus.getModel().getValueAt(linhaSelec, 1);
+	    Object categoria = tblStatus.getModel().getValueAt(linhaSelec, 2);
+	    Object status = tblStatus.getModel().getValueAt(linhaSelec, 5);
+	    Object comentario = tblStatus.getModel().getValueAt(linhaSelec, 6);
+	    Object descricao = tblStatus.getModel().getValueAt(linhaSelec, 7);
+	    Object idUsu = tblStatus.getModel().getValueAt(linhaSelec, 8);
+
+	    txtIdCha.setText(idCha != null ? idCha.toString() : "");
+	    txtTitulo.setText(titulo != null ? titulo.toString() : "");
+	    boxCategoria.setSelectedItem(categoria != null ? categoria.toString() : "");
+	    boxStatus.setSelectedItem(status != null ? status.toString() : "");
+	    txtComen.setText(comentario != null ? comentario.toString() : "");
+	    txtDesc.setText(descricao != null ? descricao.toString() : "");
+	    txtIdUsu.setText(idUsu != null ? idUsu.toString() : "");
+		
+	}
+	
+	
+	/*
 	 * Metodo Update do CRUD
 	 */
 	
-	
 	public void alterarChamado() {
-		
-		/*
-		 * CREATE TABLE chamado (
-    	idCha INT NOT NULL AUTO_INCREMENT,
-    	tituloCha VARCHAR(100) NOT NULL,
-    	categoriaCha VARCHAR(50),
-    	horaCriCha DATE,
-    	anexoCha BLOB,
-    	statusCha VARCHAR(45) NOT NULL DEFAULT 'aberto',
-    	comentarioCha TEXT,
-    	descricaoCha TEXT,
-   		idUsu INT NOT NULL,
-    	PRIMARY KEY (idCha),
-    	FOREIGN KEY (idUsu) REFERENCES usuario (idUsu)
-);
-		 */
 		
 		//UPDATE chamado set tituloCha = 'Arrumar bateria', categoriaCha = 'Hardware e Perifericos', horaCricha = NOW(),statusCha = 'fechado',
 		//comentarioCha = 'Problema na bateria chefia', idUsu = 1 WHERE idCha = 1;
-		String sql = "";
+		String sql = "UPDATE chamado SET tituloCha = ?, categoriaCha = ?, horaCriCha = ?, anexoCha = ?,statusCha = ?, comentarioCha = ?,"
+				+ " descricaoCha = ?, idUsu = ? WHERE idCha = ? ";
+		
+		con = ModuloConexao.conector();
 		
 		
+		Date data = null;
+		// Preciso converter de date para sql.date, porque o pstm não vai deixar inserir no banco como string
+		try {
+			data = sdf.parse(txtHora.getText());
+		} catch (ParseException e) {
+			System.out.println("Não foi possivel realizar a conversar: "+ e);
+		}
+		java.sql.Date dataSql = new java.sql.Date(data.getTime());
 		
 		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtTitulo.getText());
+			pstm.setString(2, boxCategoria.getSelectedItem().toString());
+			pstm.setDate(3, dataSql);
+			pstm.setBlob(4, arquivoFinal);
+			pstm.setString(5, boxStatus.getSelectedItem().toString());
+			pstm.setString(6, txtComen.toString());
+			pstm.setString(7, txtDesc.toString());
+			pstm.setInt(8, Integer.parseInt(txtIdUsu.getText()));
+			pstm.setInt(9, Integer.parseInt(txtIdCha.getText()));
+			int alterado = pstm.executeUpdate();
+			if(alterado > 0) {
+				JOptionPane.showMessageDialog(null, "Atualizado no banco com sucesso!");
+			}
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar Chamado! "+ e);
+		}
 		
 		
 	}
+	
+	
 	
 	
 	
