@@ -311,7 +311,7 @@ public class AbrirChamado extends JInternalFrame {
 					
 				}else {
 					criarChamado();
-					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+					JOptionPane.showMessageDialog(null, "Chamado aberto com sucesso!");
 					limparCampos();
 					
 				}
@@ -331,7 +331,7 @@ public class AbrirChamado extends JInternalFrame {
 					
 				}else {
 					alterarChamado();
-					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+					JOptionPane.showMessageDialog(null, "Alterado com sucesso!");
 					limparCampos();
 				}
 				
@@ -585,8 +585,8 @@ public class AbrirChamado extends JInternalFrame {
 			pstm.setDate(3, dataSql);
 			pstm.setBlob(4, arquivoFinal);
 			pstm.setString(5, boxStatus.getSelectedItem().toString());
-			pstm.setString(6, txtComen.toString());
-			pstm.setString(7, txtDesc.toString());
+			pstm.setString(6, txtComen.getText());
+			pstm.setString(7, txtDesc.getText());
 			pstm.setInt(8, Integer.parseInt(txtIdUsu.getText()));
 			pstm.setInt(9, Integer.parseInt(txtIdCha.getText()));
 			int alterado = pstm.executeUpdate();

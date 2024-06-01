@@ -110,7 +110,7 @@ public class SenhaEsquecida extends JFrame {
 				}else if(!cheque.matches()){
 					JOptionPane.showMessageDialog(null,"Preencha o campo corretamente, caso contrario não iremos notificar a equipe", "Falha",JOptionPane.ERROR_MESSAGE);
 				}else {
-					JOptionPane.showMessageDialog(null,"Um chamado foi aberto! Nossa equipe deve visualizar em breve!", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+					enviaNotificao();
 					setVisible(false);
 				}
 			}
@@ -153,18 +153,26 @@ public class SenhaEsquecida extends JFrame {
 	public void enviaNotificao() {
 		//SELECT * FROM usuario WHERE emailUsu = 'henrique@fatec.sp';
 		
-		String sql = "SELECT * FROM usuario WHERE emailUsu = ?";
+		String sqlBusca = "SELECT * FROM usuario WHERE emailUsu = ?";
 		
 		con = ModuloConexao.conector();
 		try {
-			pstm = con.prepareStatement(sql);
+			pstm = con.prepareStatement(sqlBusca);
 			pstm.setString(1, varEmail.getText());
 			rs = pstm.executeQuery();
 			if(rs.next()) {
-				//Esqueci de criar a insert do chamado! Preciso 
+				String sqlInsert = "INSERT INTO chamado (tituloCha, descricaoCha, categoriaCha, horaCriCha, statusCha, idUsu) "
+						+ "VALUES ('Esqueci minha senha', 'Mensagem automatica! Usuario esqueceu senha', 'Acesso', CURDATE(), 'aberto', ?)";
+				pstm = con.prepareStatement(sqlInsert);
+				pstm.setInt(1, Integer.parseInt(rs.getString(1)));
+				int alterado = pstm.executeUpdate();
 				
+				if(alterado > 0) {
+					JOptionPane.showMessageDialog(null, "Chamado aberto com sucesso, espere até ser atendido!");
+				}
 				
-				
+			}else {
+				JOptionPane.showMessageDialog(null, "Não foi possivel encontrar o Email no banco de dados :(");
 			}
 		}catch(SQLException e) {
 			
