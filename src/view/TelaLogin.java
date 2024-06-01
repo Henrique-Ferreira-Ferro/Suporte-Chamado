@@ -65,6 +65,7 @@ public class TelaLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public TelaLogin() {
+		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(TelaLogin.class.getResource("/recursos/suporte-tecnico.png")));
 		
 		con = ModuloConexao.conector();

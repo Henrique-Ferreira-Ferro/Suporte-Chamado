@@ -115,7 +115,7 @@ public class TelaPrincipal extends JFrame {
 		mnNewMenu_4.setFont(new Font("Arial", Font.BOLD, 14));
 		menuBar.add(mnNewMenu_4);
 		
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Abrir Chamado");
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Gerenciar Chamados");
 		mntmNewMenuItem_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AbrirChamado chamado = new AbrirChamado();
