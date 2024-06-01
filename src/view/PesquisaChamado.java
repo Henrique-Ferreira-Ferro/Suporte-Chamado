@@ -1,23 +1,25 @@
 package view;
 
 import java.awt.EventQueue;
-
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
-import javax.swing.JComboBox;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+
 
 public class PesquisaChamado extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JTable table;
-	private JTextField textField_1;
 	private JLabel lblPesquisarPorStatus;
 
 	/**
@@ -49,19 +51,14 @@ public class PesquisaChamado extends JInternalFrame {
 		setResizable(true);
 		getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Pesquisar por Id");
+		JLabel lblNewLabel = new JLabel("Pesquisar por Data");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 13));
-		lblNewLabel.setBounds(29, 89, 105, 13);
+		lblNewLabel.setBounds(29, 89, 128, 13);
 		getContentPane().add(lblNewLabel);
 		
 		table = new JTable();
 		table.setBounds(29, 153, 621, 411);
 		getContentPane().add(table);
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(144, 86, 42, 19);
-		getContentPane().add(textField_1);
-		textField_1.setColumns(10);
 		
 		lblPesquisarPorStatus = new JLabel("Pesquisar por Status");
 		lblPesquisarPorStatus.setFont(new Font("Arial", Font.BOLD, 13));
@@ -74,5 +71,12 @@ public class PesquisaChamado extends JInternalFrame {
 		comboBox.setBounds(490, 85, 136, 21);
 		getContentPane().add(comboBox);
 		
+//		UtilDateModel model = new UtilDateModel();
+//		JDatePanelImpl datePanel = new JDatePanelImpl(model);
+//		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+//		 
+//		frame.add(datePicker);
+		
 	}
+	
 }
