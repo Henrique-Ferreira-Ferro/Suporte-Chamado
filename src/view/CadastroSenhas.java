@@ -1,28 +1,30 @@
 package view;
 
 import java.awt.EventQueue;
-
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
-import javax.swing.JTextField;
-
-import dao.ModuloConexao;
-import pattersAndLogic.SessaoUsuario;
-
-import javax.swing.JTextArea;
-import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import dao.ModuloConexao;
+import net.proteanit.sql.DbUtils;
+import pattersAndLogic.SessaoUsuario;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CadastroSenhas extends JInternalFrame {
 
@@ -32,13 +34,15 @@ public class CadastroSenhas extends JInternalFrame {
 	private JTextField txtLogin;
 	private JTextField txtEmail;
 	private JTextField txtSenha;
-	private JTextField textField_5;
+	private JTextField txtPesquisa;
 	private JTextArea textArea;
 	
 	
 	private Connection con;
 	private PreparedStatement pstm;
+	private ResultSet rs;
 	private JTextField txtIdTecnico;
+	private JTable tblSenha;
 	
 	/**
 	 * Launch the application.
@@ -135,11 +139,17 @@ public class CadastroSenhas extends JInternalFrame {
 		lblNewLabel_1_1.setBounds(10, 33, 170, 13);
 		getContentPane().add(lblNewLabel_1_1);
 		
-		textField_5 = new JTextField();
-		textField_5.setFont(new Font("Arial", Font.PLAIN, 13));
-		textField_5.setBounds(190, 31, 366, 19);
-		getContentPane().add(textField_5);
-		textField_5.setColumns(10);
+		txtPesquisa = new JTextField();
+		txtPesquisa.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				pesquisaAvancada();
+			}
+		});
+		txtPesquisa.setFont(new Font("Arial", Font.PLAIN, 13));
+		txtPesquisa.setBounds(190, 31, 366, 19);
+		getContentPane().add(txtPesquisa);
+		txtPesquisa.setColumns(10);
 		
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -154,28 +164,49 @@ public class CadastroSenhas extends JInternalFrame {
 				if(logicaVerificacao() == true) {
 					inserir();
 					JOptionPane.showMessageDialog(null, "Cadastrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-					txtLogin.setText("");
-					txtEmail.setText("");
-					txtOrigem.setText("");
-					txtSenha.setText("");
-					textArea.setText("");
+					limparCampos();
 				}else {
 					JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro, preencha corretamente os campos");
 				}
 				
 				
 			}
+
+			
 		});
 		btnSalvar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/salve-.png")));
 		btnSalvar.setBounds(132, 522, 66, 66);
 		getContentPane().add(btnSalvar);
 		
 		JLabel btnAlterar = new JLabel("");
+		btnAlterar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(logicaVerificacao() == true) {
+					atualizarSenha();
+					limparCampos();
+				}else {
+					JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro, preencha corretamente os campos");
+				}
+				
+			}
+		});
 		btnAlterar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/alterar.png")));
 		btnAlterar.setBounds(327, 522, 66, 66);
 		getContentPane().add(btnAlterar);
 		
 		JLabel btnDeletar = new JLabel("");
+		btnDeletar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int respon = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a senha?", "Confirmação", JOptionPane.YES_NO_OPTION);
+				if(logicaVerificacao() == true && respon <=0) {
+					deletarSenha();
+					limparCampos();
+				}
+				
+			}
+		});
 		btnDeletar.setIcon(new ImageIcon(CadastroSenhas.class.getResource("/recursos/excluir.png")));
 		btnDeletar.setBounds(516, 502, 66, 86);
 		getContentPane().add(btnDeletar);
@@ -199,6 +230,19 @@ public class CadastroSenhas extends JInternalFrame {
 
 		int idUsuarioLogado = SessaoUsuario.getInstancia().getIdUsuario();
 		txtIdTecnico.setText(String.valueOf(idUsuarioLogado));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(190, 62, 366, 86);
+		getContentPane().add(scrollPane);
+		
+		tblSenha = new JTable();
+		tblSenha.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setagemCampos();
+			}
+		});
+		scrollPane.setViewportView(tblSenha);
 		
 		
 	}
@@ -250,6 +294,15 @@ private boolean logicaVerificacao() {
 		}
 	}
 	
+	//Limpar campos
+	private void limparCampos() {
+		txtLogin.setText("");
+		txtEmail.setText("");
+		txtOrigem.setText("");
+		txtSenha.setText("");
+		textArea.setText("");
+	}
+	
 	/*
 	 * Inserir no banco de dados
 	 * Abaixo se encontra o script para inserir no banco
@@ -285,7 +338,108 @@ private boolean logicaVerificacao() {
 		}catch(SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao inserir no banco! Erro: "+ e);
 		}
+	}
+	
+	
+	/*
+	 * Pesquisa avançada por origim da senha
+	 */
+	
+	private void pesquisaAvancada() {
 		
+		String sql = "SELECT idSen as ID, origemSen as Origem, emailSen as Email, senhaSen as Senha, loginSen as Login, descricaoSen as Descrição, "
+				+ "idUsu FROM senhasGerais WHERE origemSen LIKE ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtPesquisa.getText() + "%");
+			rs = pstm.executeQuery();
+			tblSenha.setModel(DbUtils.resultSetToTableModel(rs));
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar realizar a busca no banco: "+ e);
+			
+		}
+	}
+	
+	
+	/*
+	 * Setagem de campos. O metodo abaixo pega os dados da tabela quando uma linha é clicada
+	 */
+	
+	private void setagemCampos() {
+		
+		int setar = tblSenha.getSelectedRow();
+		
+		txtId.setText(tblSenha.getModel().getValueAt(setar, 0).toString());
+		txtOrigem.setText(tblSenha.getModel().getValueAt(setar, 1).toString());
+		txtEmail.setText(tblSenha.getModel().getValueAt(setar, 2).toString());
+		txtSenha.setText(tblSenha.getModel().getValueAt(setar, 3).toString());
+		txtLogin.setText(tblSenha.getModel().getValueAt(setar, 4).toString());
+		textArea.setText(tblSenha.getModel().getValueAt(setar, 5).toString());
+		txtIdTecnico.setText(tblSenha.getModel().getValueAt(setar, 6).toString());
+		
+	}
+	
+	
+	
+	/*
+	 * UPDATE do CRUD
+	 */
+	
+	private void atualizarSenha() {
+		
+		String sql = "UPDATE senhasGerais SET origemSen = ?, emailSen = ?, senhaSen = ?, loginSen = ?, descricaoSen = ? WHERE idSen = ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtOrigem.getText());
+			pstm.setString(2, txtEmail.getText());
+			pstm.setInt(3, Integer.parseInt(txtSenha.getText()));
+			pstm.setString(4, txtLogin.getText());
+			pstm.setString(5, textArea.getText());
+			pstm.setInt(6, Integer.parseInt(txtId.getText()));
+			int alterado = pstm.executeUpdate();
+			
+			if(alterado > 0) {
+				JOptionPane.showMessageDialog(null, "A senha foi alterada com sucesso!");
+			}
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar a senha no banco: "+ e);
+			
+		}
+		
+	}
+	
+	
+	/*
+	 * Delete do CRUD
+	 */
+	
+	private void deletarSenha() {
+	
+		String sql = "DELETE FROM senhasGerais WHERE idSen = ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setInt(1, Integer.parseInt(txtId.getText()));
+			int deletado = pstm.executeUpdate();
+			
+			if(deletado > 0) {
+				JOptionPane.showMessageDialog(null, "Deletado do banco com sucesso!");
+			}
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar deletar do banco de dados: "+ e);
+			
+		}
 		
 	}
 	

@@ -184,6 +184,13 @@ public class CadastroUsuario extends JInternalFrame {
 		getContentPane().add(btnSalvar);
 		
 		JLabel btnGravar = new JLabel("");
+		btnGravar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				atualizarUsuario();
+				limpar();
+			}
+		});
 		btnGravar.setIcon(new ImageIcon(CadastroUsuario.class.getResource("/recursos/alterar.png")));
 		btnGravar.setBounds(275, 515, 66, 66);
 		getContentPane().add(btnGravar);
@@ -192,12 +199,13 @@ public class CadastroUsuario extends JInternalFrame {
 		btnDeletar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(txtIdUsu.getText() == "") {
-					JOptionPane.showMessageDialog(null, "Selecione um usuario na tabela para exclui-lo!");
-				}else {
-					deleteUser();
-					limpar();
-				}
+				int respon = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar o usuário?", "Confirmação", JOptionPane.YES_NO_OPTION);
+					if(respon <= 0) {
+						deleteUser();
+						limpar();
+					}
+					
+					
 			}
 		});
 		btnDeletar.setIcon(new ImageIcon(CadastroUsuario.class.getResource("/recursos/excluir.png")));
@@ -362,10 +370,17 @@ private boolean logicaVerificacao() {
 		String sql = "DELETE FROM usuario WHERE idUsu = ?";
 		
 		con = ModuloConexao.conector();
+		int transf = 0;
+		if(!txtIdUsu.getText().isBlank()) {
+			transf = Integer.parseInt(txtIdUsu.getText());
+		}else {
+			JOptionPane.showMessageDialog(null, "O id do usuario não pode ser nulo!");;
+		}
+		
 		
 		try {
 			pstm = con.prepareStatement(sql);
-			pstm.setInt(1, Integer.parseInt(txtIdUsu.getText()));
+			pstm.setInt(1, transf);
 			int delete = pstm.executeUpdate();
 			if(delete > 0) {
 				JOptionPane.showMessageDialog(null, "Apagado com sucesso do banco!!");
@@ -419,7 +434,40 @@ private boolean logicaVerificacao() {
 	}
 	
 	
+	/*
+	 * Update do CRUD
+	 */
 	
+	private void atualizarUsuario() {
+		//UPDATE usuario SET nomeUsu = ?, senhaUsu = ?, emailUsu = ?, nivelUsu = ?, loginUsu = ?, idDepart = ? WHERE idUsu = ?;
+		String sql = "UPDATE usuario SET nomeUsu = ?, senhaUsu = ?, emailUsu = ?, nivelUsu = ?, loginUsu = ?, idDepart = ? WHERE idUsu = ?";
+		
+		con = ModuloConexao.conector();
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, txtNome.getText());
+			pstm.setInt(2, Integer.parseInt(txtSenha.getText()));
+			pstm.setString(3, txtEmail.getText());
+			pstm.setString(4, boxLevel.getSelectedItem().toString());
+			pstm.setString(5, txtLogin.getText());
+			pstm.setInt(6, boxDepart.getSelectedIndex() + 1);
+			pstm.setInt(7, Integer.parseInt(txtIdUsu.getText()));
+			int alterado = pstm.executeUpdate();
+			
+			if(alterado > 0) {
+				JOptionPane.showMessageDialog(null, "Alterado com sucesso!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Problema ao tentar alterar!");
+			}
+			
+		}catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar usuario: "+ e);
+		}
+		
+		
+		
+	}
 	
 	
 	
