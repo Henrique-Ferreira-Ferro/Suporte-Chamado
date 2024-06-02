@@ -52,6 +52,7 @@ public class PesquisaSenha extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public PesquisaSenha() {
+		setTitle("Pesquisar Senha");
 		setFrameIcon(new ImageIcon(PesquisaSenha.class.getResource("/recursos/PesquisaSenha.png")));
 		setBounds(0, 0, 695, 640);
 		setIconifiable(true);
