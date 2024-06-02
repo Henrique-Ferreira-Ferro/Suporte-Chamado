@@ -93,8 +93,8 @@ public class TelaSobre extends JFrame {
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setFont(new Font("Arial", Font.BOLD, 15));
-		lblNewLabel_2.setIcon(new ImageIcon(TelaSobre.class.getResource("/recursos/look (1).png")));
-		lblNewLabel_2.setBounds(198, 218, 191, 191);
+		lblNewLabel_2.setIcon(new ImageIcon(TelaSobre.class.getResource("/recursos/link.png")));
+		lblNewLabel_2.setBounds(199, 250, 140, 141);
 		contentPane.add(lblNewLabel_2);
 	}
 }

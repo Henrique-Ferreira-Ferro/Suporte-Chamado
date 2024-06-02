@@ -25,8 +25,9 @@ import com.toedter.calendar.JDateChooser;
 
 import dao.ModuloConexao;
 import net.proteanit.sql.DbUtils;
+import pattersAndLogic.SessaoUsuario;
 
-public class PesquisaChamado extends JInternalFrame {
+public class AcompanharChamado extends JInternalFrame {
 
 	private JDateChooser dateChooser;
 	private static final long serialVersionUID = 1L;
@@ -38,8 +39,8 @@ public class PesquisaChamado extends JInternalFrame {
 	private ResultSet rs;
 	private JScrollPane scrollPane;
 
-	
-	private JComboBox boxStatusPesqui ;
+	private JComboBox boxStatusPesqui;
+
 	/**
 	 * Launch the application.
 	 */
@@ -47,7 +48,7 @@ public class PesquisaChamado extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					PesquisaChamado frame = new PesquisaChamado();
+					AcompanharChamado frame = new AcompanharChamado();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -59,15 +60,14 @@ public class PesquisaChamado extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public PesquisaChamado() {
-		setTitle("Pesquisar Chamado");
-		setFrameIcon(new ImageIcon(PesquisaChamado.class.getResource("/recursos/pesquisa chamado.png")));
+	public AcompanharChamado() {
+		setTitle("Acompanhar chamado");
+		setFrameIcon(new ImageIcon(AcompanharChamado.class.getResource("/recursos/video-chamada (1).png")));
 
 		setBounds(0, 0, 695, 640);
 		setIconifiable(true);
 		setMaximizable(true);
 		setClosable(true);
-		setResizable(true);
 		getContentPane().setLayout(null);
 
 		JLabel lblNewLabel = new JLabel("Pesquisar por Data");
@@ -119,23 +119,21 @@ public class PesquisaChamado extends JInternalFrame {
 
 	}
 
-	/*
-	 * Os metodos abaixo faram pesquisas no banco em chamados
-	 */
+	int idUsuarioLogado = SessaoUsuario.getInstancia().getIdUsuario();
 
 	public void pesquisaData() {
-		
 
 		String sql = "SELECT idCha as ID, tituloCha as Titulo, categoriaCha as Categoria, horaCricha as Data, anexoCha as Anexo,statusCha as Status,"
-				+ " comentarioCha as Comentario, descricaoCha as Descricao, idUsu FROM chamado WHERE horaCricha = ?";
+				+ " comentarioCha as Comentario, idUsu FROM chamado WHERE horaCricha = ? AND idUsu = ?";
 
 		con = ModuloConexao.conector();
 		try {
-				Date dataSql = new Date(dateChooser.getDate().getTime());
-				pstm = con.prepareStatement(sql);
-				pstm.setDate(1, dataSql);
-				rs = pstm.executeQuery();
-				tblChamado.setModel(DbUtils.resultSetToTableModel(rs));
+			Date dataSql = new Date(dateChooser.getDate().getTime());
+			pstm = con.prepareStatement(sql);
+			pstm.setDate(1, dataSql);
+			pstm.setInt(2, idUsuarioLogado);
+			rs = pstm.executeQuery();
+			tblChamado.setModel(DbUtils.resultSetToTableModel(rs));
 
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao tentar realizar a pesquisa!");
@@ -143,20 +141,19 @@ public class PesquisaChamado extends JInternalFrame {
 	}
 
 	public void pesquisaStatus() {
-		
-		String sql = "SELECT idCha as ID\r\n"
-				+ ", tituloCha as Titulo, categoriaCha as Categoria,horaCriCha as Hora,"
-				+ "anexoCha as Anexo,statusCha as status,comentarioCha as Coment,descricaoCha as Des,idUsu FROM chamado WHERE statusCha = ?";
+
+		String sql = "SELECT idCha as ID " + ", tituloCha as Titulo, categoriaCha as Categoria,horaCriCha as Hora,"
+				+ "anexoCha as Anexo,statusCha as status,comentarioCha as Coment,idUsu FROM chamado WHERE statusCha = ? AND idUsu = ?";
 		try {
+			con = ModuloConexao.conector();
 			pstm = con.prepareStatement(sql);
 			pstm.setString(1, boxStatusPesqui.getSelectedItem().toString());
+			pstm.setInt(2, idUsuarioLogado);
 			rs = pstm.executeQuery();
 			tblChamado.setModel(DbUtils.resultSetToTableModel(rs));
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao pesquisar pelo chamado: "+ e);
+			JOptionPane.showMessageDialog(null, "Erro ao pesquisar pelo chamado: " + e);
 		}
 	}
-	
-	
-	
+
 }
