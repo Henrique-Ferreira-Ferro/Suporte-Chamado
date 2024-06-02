@@ -170,10 +170,6 @@ public class TelaPrincipal extends JFrame {
 		});
 		mnNewMenu_2.add(mntmNewMenuItem_1);
 		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Como usar o sistema");
-		mntmNewMenuItem_2.setFont(new Font("Segoe UI", Font.BOLD, 12));
-		mnNewMenu_2.add(mntmNewMenuItem_2);
-		
 		JMenu mnNewMenu_3 = new JMenu("Opções");
 	
 		mnNewMenu_3.setFont(new Font("Arial", Font.BOLD, 14));
