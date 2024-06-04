@@ -14,14 +14,14 @@ public class Chamado {
 	
 	
 	//Um chamado é feito por um usuario
-	private Usuarios usuario;
+	private Usuario usuario;
 	
 	public Chamado() {
 		
 	}
 
 	public Chamado(int id, String titulo, String categoria, String descricao, String[] status, Date horaCriada,
-			String comentarios, Usuarios usuario) {
+			String comentarios, Usuario usuario) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -81,11 +81,11 @@ public class Chamado {
 		this.comentarios = comentarios;
 	}
 
-	public Usuarios getUsuario() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuario(Usuarios usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 

@@ -3,10 +3,10 @@ package entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuarios {
+public class Usuario {
 	private int id;
 	private String name;
-	private String senha;
+	private int senha;
 	private String email;
 	private String nivel;
 	private String login;
@@ -18,11 +18,11 @@ public class Usuarios {
 	private List<Chamado> chamados = new ArrayList<>();
 	
 	
-	public Usuarios() {
+	public Usuario() {
 		
 	}
 
-	public Usuarios(String name, String senha, String email, String posicao, String login) {
+	public Usuario(String name, int senha, String email, String posicao, String login) {
 		this.name = name;
 		this.senha = senha;
 		this.email = email;
@@ -34,7 +34,11 @@ public class Usuarios {
 	public int getId() {
 		return id;
 	}
-
+	
+	
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -46,12 +50,12 @@ public class Usuarios {
 	}
 
 
-	public String getSenha() {
+	public int getSenha() {
 		return senha;
 	}
 
 
-	public void setSenha(String senha) {
+	public void setSenha(int senha) {
 		this.senha = senha;
 	}
 
