@@ -10,7 +10,6 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,10 +24,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import dao.ModuloConexao;
 import entities.Departamento;
 import entities.Usuario;
-import net.proteanit.sql.DbUtils;
 import services.UsuarioService;
 
 public class CadastroUsuario extends JInternalFrame {
