@@ -11,7 +11,7 @@ public class ModuloConexao {
 		Connection con = null;
 		String path = "jdbc:mysql://localhost:3306/suporte";
 		String nome = "root";
-		String senha = "46182001";
+		String senha = "0";
 		
 		try {
 			con = DriverManager.getConnection(path,nome,senha);
